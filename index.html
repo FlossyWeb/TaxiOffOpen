@@ -1151,10 +1151,10 @@
 		}
 		var rdvlat = center.lat();
 		var rdvlng = center.lng();
-		url = '';
+		//url = '';
 		num_req = idcourse;
 		dep = $.sessionStorage.getItem('dep');
-		i = 0; // We need to make any numreq unique on that one !!
+		//i = 0; // We need to make any numreq unique on that one !!
 		//$.post("https://www.mytaxiserver.com/appserver/open_app_dcvp_xml.php", { lat: rdvlat, lng: rdvlng, type: typecar, howmany: howMany, cb: cb, group: '1', dep: '', pass: 'true'}, function(xml){
 		$.post('https://www.mytaxiserver.com/appserver/open_app_dcvp_xml.php', {lat: rdvlat, lng: rdvlng, type: typecar, howmany: howMany, cb: cb, group: group, dep: dep, zip: zip, pass: 'true'}, function(xml){
 			//navigator.notification.alert('IN');
@@ -1167,25 +1167,29 @@
 				var lng2 = $(this).attr('lng');
 				var timestamp = $(this).attr('timestamp');
 				var distance = $(this).attr('distance');
-				i = $(this).attr('count');
-				num_req = num_req+1;
+				var i = $(this).attr('count');
+				//num_req = num_req+1;
 				var latlng = new google.maps.LatLng(lat2, lng2);
 				var display_name = 'Taxi ' + name;
 				var cabIcon = 'visuels/taxi_loc_icon.png';
-				url = 'taxi=' + name + '&tel=' + address + '&cabid=' + cabid + '&idcourse=' + idcourse + '&num_req=' + num_req + '&rdvpoint=' + rdvpoint + '&lat=' + rdvlat + '&lng=' + rdvlng + '&comments=' + comments + '&cell=' + cell + '&when=' + when + '&date=' + date + '&operator=' + operator + '&appname=' + appname + '&dep='+dep+'&group=1&ack=0&db=1';
+				var url = 'taxi=' + name + '&tel=' + address + '&cabid=' + cabid + '&idcourse=' + idcourse + '&num_req=' + num_req + '&rdvpoint=' + rdvpoint + '&lat=' + rdvlat + '&lng=' + rdvlng + '&comments=' + comments + '&cell=' + cell + '&when=' + when + '&date=' + date + '&operator=' + operator + '&appname=' + appname + '&dep='+dep+'&group=1&ack=0&db=1';
+				//url = 'rdvpoint=' + rdvpoint + '&operator=' + operator + '&lat=' + rdvlat + '&lng=' + rdvlng + '&cell=' + cell + '&appname=' + appname + '&cabid=' + cabid + '&dep='+dep+'&group=1&ack=0&db=1';
 				url = url.replace(/'/g, "&rsquo;");
 				url = url.replace(/(?:\r\n|\r|\n)/g, '<br/>'); // Replaces line breaks by <br/>
-				mapEvent.addMarker({ id: i ,'position': latlng, 'bounds': true, 'title': display_name, 'icon': cabIcon }).click(function() {
-					infoCont = '<p style="color:#333;"><b>' + name + ' est &agrave; ' + parseFloat(distance).toFixed(1) + ' Km de vous, infos: ' + address+ '</b></p>';
+				mapEvent.addMarker({ id: i ,'position': latlng, 'bounds': true, 'title': name, 'icon': cabIcon }).click(function() {
+					infoCont = '<div id="infoCont"><p style="color:#333;"><b>i='+i+' - ' + name + ' est &agrave; ' + parseFloat(distance).toFixed(1) + ' Km de vous, infos: ' + address+ '</b></p></div>';
 					callBtn='<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJob(\''+ url +'\')">Choisir</button>';
+					//mapEvent.openInfoWindow({ 'content':  infoCont}, this);
 					mapEvent.openInfoWindow({ 'content':  infoCont+callBtn}, this);
 				});
 				//mapEvent.addBounds(latlng);
 				//$.post("https://www.mytaxiserver.com/appserver/diary_app_share.php", url, function(data) {});
 				//$('#dblinks').append($('<input class="cabs" id="' + i + '" type="hidden" onclick="sendJob(\''+ url +'\')" />'));
+				$('#dblinks').append($('<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJob(\''+ url +'\')">Choisir</button>'));
+				//$('#infoCont').append($('<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJob(\''+ url +'\')">Choisir</button>'));
 			});
-			num_req = num_req+1;
-			i = parseInt(i,10)+1;
+			//num_req = num_req+1;
+			//i = parseInt(i,10)+1;
 			//url = 'taxi=0000&tel=0000000000&idcourse=' + idcourse + '&num_req=' + num_req + '&rdvpoint=' + rdvpoint + '&lat=' + rdvlat + '&lng=' + rdvlng + '&comments=' + comments + '&cell=' + cell + '&when=' + when + '&date=' + date + '&operator=' + operator + '&dep='+dep+'&group=1&ack=0&db=1';
 			//navigator.notification.alert(url);
 			//url = url.replace(/'/g, "&rsquo;");
@@ -1193,8 +1197,8 @@
 			// Sends Auction Request to TaxiMedia appserver
 			//$('#dblinks').append($('<input class="cabs" id="' + i + '" type="hidden" onclick="sendJob(\''+ url +'\')" />'));
 			//$.post("https://www.mytaxiserver.com/appserver/diary_app_share.php", url, function(data) {});
-		}, "xml");
-		$.mobile.loading( "hide" );
+		}, "xml").done(function() { $.mobile.loading( "hide" ); });
+		//$.mobile.loading( "hide" );
 		$('#dblinks').append($('<input id="stop" type="hidden" value="0" />'));
 		/*
 		if(i==0) {
@@ -1226,6 +1230,8 @@
     function check_answer()
     {
 		//dep = $.sessionStorage.getItem('dep');
+		$('.confButtons').hide('fast');
+		$('#answer').empty().append('<p><b>Veuillez patienter pendant que le chauffeur r&eacute;pond...<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCall()" value=""> Retour / Annulation </button></b></p>');
 		$.post("https://www.mytaxiserver.com/appserver/open_status.php?hail_id=" + hail_id + "&check=1" , {}, function(data){ 
 			if (data != 0)
 			{
@@ -1238,6 +1244,7 @@
 				//var box = navigator.notification.alert(data);
 				//$('#thanksResults').empty().append(data);
 				$('#answer').empty().append(data);
+				$('.confButtons').show('fast');
 				$( "#answerBox" ).popup( "open", { positionTo: "window" } );
 				/*
 				var box = confirm(data);
@@ -1260,7 +1267,7 @@
 		//navigator.notification.alert(idcourse);
 		dep = $.sessionStorage.getItem('dep');
 		if(hail_id!='') {
-			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&ack=1&db=1&cab_wont=1&del=1&status=outdated_customer"); 
+			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer"); 
 		}
     }        
 	function stopCall()
@@ -1457,7 +1464,7 @@
     </div>
     <div data-role="page" data-theme="c" id="map_page"">
         <div class="ui-content" role="main" id="map">
-			<div data-role="popup" data-theme="c" id="answerBox" data-dismissible="false" data-position-to="window">
+			<div data-role="popup" data-theme="c" id="answerBox" data-dismissible="false" data-position-to="window" data-overlay-theme="b">
 				<div data-theme="c" data-role="header">
 					<h1>
 						Confirmation
@@ -1465,11 +1472,11 @@
 				</div>
 				<div class="ui-content" role="main">
 					<div id="answer"></div>
-					<input type="button" value="ACCEPTER" onClick="gobackOpen('index.html', '1')"/>
-					<input type="button" value="REFUSER" onClick="gobackOpen('index.html', '0')"/>
+					<input type="button" value="ACCEPTER" onClick="gobackOpen('index.html', '1')" class="confButtons"/>
+					<input type="button" value="REFUSER" onClick="gobackOpen('index.html', '0')" class="confButtons"/>
 				</div>
 			</div>
-			<div data-role="popup" data-theme="c" id="backPop" data-dismissible="false">
+			<div data-role="popup" data-theme="c" id="backPop" data-dismissible="false" data-position-to="window" data-overlay-theme="b">
 				<div data-theme="c" data-role="header">
 					<h1>
 						Annulation
