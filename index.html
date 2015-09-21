@@ -1196,6 +1196,12 @@
 		}, "xml");
 		$.mobile.loading( "hide" );
 		$('#dblinks').append($('<input id="stop" type="hidden" value="0" />'));
+		/*
+		if(i==0) {
+			if(app) navigator.notification.alert('Aucun taxis touvé', alertDismissed, 'MonTaxi', 'OK');
+			else alert('AUCUN TAXI TROUVE !!');
+			document.location.href='index.html';
+		}*/
 		//deliver();
 	}// ENDS FUNCTION
 
@@ -1225,7 +1231,7 @@
 			{
 				//clearInterval(time);
 				//clearTimeout(endcourse);
-				cancel(idcourse);
+				//cancel(idcourse);
 				document.getElementById('stop').value = 1;
 				//var box = navigator.notification.alert(data);
 				//stopCall();
@@ -1288,13 +1294,13 @@
 		idcourse=''; // reset idcourse
 		if(action==1) {
 			// Client Agrees...
-			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_client").done(function(data) {
+			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
 				document.location.href=flag;
 			});
 		}
 		else {
 			// Client Abort...
-			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_client").done(function(data) {
+			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer").done(function(data) {
 				document.location.href=flag;
 			});
 		}
@@ -1459,7 +1465,7 @@
 				</div>
 				<div class="ui-content" role="main">
 					<div id="answer"></div>
-					<input type="button" value="VALIDER" onClick="gobackOpen('index.html', '1')"/>
+					<input type="button" value="ACCEPTER" onClick="gobackOpen('index.html', '1')"/>
 					<input type="button" value="REFUSER" onClick="gobackOpen('index.html', '0')"/>
 				</div>
 			</div>
