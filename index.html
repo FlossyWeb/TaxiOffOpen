@@ -1286,13 +1286,13 @@
 		idcourse=''; // reset idcourse
 		if(action==1) {
 			// Client Agrees...
-			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_client").done(function(data) {
+			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_client").done(function(data) {
 				document.location.href=flag;
 			});
 		}
 		else {
 			// Client Abort...
-			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_client").done(function(data) {
+			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_client").done(function(data) {
 				document.location.href=flag;
 			});
 		}
