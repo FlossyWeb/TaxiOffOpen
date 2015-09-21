@@ -1177,7 +1177,7 @@
 				url = url.replace(/'/g, "&rsquo;");
 				url = url.replace(/(?:\r\n|\r|\n)/g, '<br/>'); // Replaces line breaks by <br/>
 				mapEvent.addMarker({ id: i ,'position': latlng, 'bounds': true, 'title': name, 'icon': cabIcon }).click(function() {
-					infoCont = '<div id="infoCont"><p style="color:#333;"><b>i='+i+' - ' + name + ' est &agrave; ' + parseFloat(distance).toFixed(1) + ' Km de vous, infos: ' + address+ '</b></p></div>';
+					infoCont = '<div id="infoCont"><p style="color:#333;"><b>' + name + ' est &agrave; ' + parseFloat(distance).toFixed(1) + ' Km de vous, infos: ' + address+ '</b></p></div>';
 					callBtn='<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJob(\''+ url +'\')">Choisir</button>';
 					//mapEvent.openInfoWindow({ 'content':  infoCont}, this);
 					mapEvent.openInfoWindow({ 'content':  infoCont+callBtn}, this);
