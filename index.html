@@ -83,6 +83,8 @@
 	var zipChecked = false;
 	var hail_id = "";
 	var taxi_phone_number;
+	var lat = 0;
+	var lng = 0;
 
 	// Scanner
 	var scanner;
@@ -802,8 +804,8 @@
 	}
 	function codeLatLng(position) {
 		var geocoder = new google.maps.Geocoder();
-		var lat = position.coords.latitude;
-		var lng = position.coords.longitude;
+		lat = position.coords.latitude;
+		lng = position.coords.longitude;
 		var latlng = new google.maps.LatLng(lat, lng);
 		geocoder.geocode({'latLng': latlng}, function(results, status) {
 			if (status == google.maps.GeocoderStatus.OK)
