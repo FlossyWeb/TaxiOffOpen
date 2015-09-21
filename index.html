@@ -1208,11 +1208,11 @@
 	
     function sendJob(url)
     {
+		$.mobile.loading( "show" );
 		$.post("https://www.mytaxiserver.com/appserver/open_diary_app_share.php", url, function(data) {
 			hail_id = data.hail_id;
 			//taxi_phone_number = data.taxi_phone_number;
-			check_answer();
-		}, "json");
+		}, "json").done(function() { check_answer();$.mobile.loading( "hide" ); }).fail(function() { $.mobile.loading( "hide" );alert('Erreur !') });
     }
 	
     function check_answer()
