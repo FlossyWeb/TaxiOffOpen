@@ -1220,32 +1220,33 @@
 	
     function sendJob(url)
     {
-		$.mobile.loading( "show" );
+		//$.mobile.loading( "show" );
+		$('.confButtons').hide('fast');
+		$('#answer').empty().append('<p><b>Veuillez patienter pendant que nous traitons votre demande aupr&egrave;s du chauffeur ...<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCall()" value=""> Retour / Annulation </button></b></p>');
+		$( "#answerBox" ).popup( "open", { positionTo: "window" } );
 		$.post("https://www.mytaxiserver.com/appserver/open_diary_app_share.php", url, function(data) {
 			hail_id = data.hail_id;
 			//taxi_phone_number = data.taxi_phone_number;
-		}, "json").done(function() { check_answer();$.mobile.loading( "hide" ); }).fail(function() { $.mobile.loading( "hide" );alert('Erreur !') });
+		}, "json").done(function() { check_answer(); }).fail(function() { alert('Erreur !') });
     }
 	
     function check_answer()
     {
 		//dep = $.sessionStorage.getItem('dep');
-		$('.confButtons').hide('fast');
-		$('#answer').empty().append('<p><b>Veuillez patienter pendant que le chauffeur r&eacute;pond...<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCall()" value=""> Retour / Annulation </button></b></p>');
 		$.post("https://www.mytaxiserver.com/appserver/open_status.php?hail_id=" + hail_id + "&check=1" , {}, function(data){ 
 			if (data != 0)
 			{
 				//clearInterval(time);
 				//clearTimeout(endcourse);
 				//cancel(idcourse);
-				document.getElementById('stop').value = 1;
+				//document.getElementById('stop').value = 1;
 				//var box = navigator.notification.alert(data);
 				//stopCall();
 				//var box = navigator.notification.alert(data);
 				//$('#thanksResults').empty().append(data);
 				$('#answer').empty().append(data);
 				$('.confButtons').show('fast');
-				$( "#answerBox" ).popup( "open", { positionTo: "window" } );
+				//$( "#answerBox" ).popup( "open", { positionTo: "window" } );
 				/*
 				var box = confirm(data);
 				if (box == true) {
@@ -1472,8 +1473,10 @@
 				</div>
 				<div class="ui-content" role="main">
 					<div id="answer"></div>
-					<input type="button" value="ACCEPTER" onClick="gobackOpen('index.html', '1')" class="confButtons"/>
-					<input type="button" value="REFUSER" onClick="gobackOpen('index.html', '0')" class="confButtons"/>
+					<div class="confButtons">
+						<input type="button" value="ACCEPTER" onClick="gobackOpen('index.html', '1')"/>
+						<input type="button" value="REFUSER" onClick="gobackOpen('index.html', '0')"/>
+					</div>
 				</div>
 			</div>
 			<div data-role="popup" data-theme="c" id="backPop" data-dismissible="false" data-position-to="window" data-overlay-theme="b">
