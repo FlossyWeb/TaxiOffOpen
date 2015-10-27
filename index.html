@@ -46,6 +46,7 @@
     <script src="barcodescanner.js"></script>
     <script src="contactNumberPicker.js"></script>
     <script src="sms.js"></script>
+    <script src="PowerManagement.js"></script>
     <script src="cdv-plugin-fb-connect.js"></script>
     <script src="facebook-js-sdk.js"></script>
     <script type="text/javascript" src="js/jquery.html5storage.min.js"></script>
@@ -85,6 +86,8 @@
 	var taxi_phone_number;
 	var lat = 0;
 	var lng = 0;
+	var badgeNumber = 1;
+	var toNotify;
 
 	// Scanner
 	var scanner;
@@ -108,6 +111,8 @@
 			//document.addEventListener("pause", onPause, false);
 			StatusBar.overlaysWebView(false);
 			StatusBar.backgroundColorByHexString("#E7B242");
+			// prevent device from sleeping
+			window.plugins.powerManagement.acquire();
 			if($.localStorage.getItem('registeredUser') != 1)
 			{
 				$.mobile.pageContainer.pagecontainer("change", "#connect", { transition: "slide"} );
@@ -129,6 +134,14 @@
 				locateMe();
 			}, 1000);
 			scanner = cordova.require("cordova/plugin/BarcodeScanner");
+			// Enable background mode
+			cordova.plugins.backgroundMode.enable();
+			cordova.plugins.backgroundMode.configure({
+				text:'App toujours en fonction, nous vous informons des courses en cours...'
+			});
+			cordova.plugins.notification.local.clearAll(function() {
+				//alert("All notifications cleared");
+			}, this);
 		}
 		// GESTION DES BOUTONS MATERIEL
 		// Bouton retour
@@ -1155,8 +1168,8 @@
 		num_req = idcourse;
 		dep = $.sessionStorage.getItem('dep');
 		//i = 0; // We need to make any numreq unique on that one !!
-		//$.post("https://www.mytaxiserver.com/appserver/open_app_dcvp_xml.php", { lat: rdvlat, lng: rdvlng, type: typecar, howmany: howMany, cb: cb, group: '1', dep: '', pass: 'true'}, function(xml){
-		$.post('https://www.mytaxiserver.com/appserver/open_app_dcvp_xml.php', {lat: rdvlat, lng: rdvlng, type: typecar, howmany: howMany, cb: cb, group: group, dep: dep, zip: zip, pass: 'true'}, function(xml){
+		//$.post('https://www.mytaxiserver.com/appserver/open_app_dcvp_xml.php', {lat: rdvlat, lng: rdvlng, type: typecar, howmany: howMany, cb: cb, group: group, dep: dep, zip: zip, pass: 'true'}, function(xml){
+		$.post('http://www.mytaxiserver.com/appserver/open_app_dcvp_xml.php', {lat: rdvlat, lng: rdvlng, type: typecar, howmany: howMany, cb: cb, group: group, dep: dep, zip: zip, pass: 'true'}, function(xml){
 			//navigator.notification.alert('IN');
 			$(xml).find('marker').each(function(){
 				var cabid = $(this).attr('cabid');
@@ -1221,6 +1234,7 @@
     function sendJob(url)
     {
 		//$.mobile.loading( "show" );
+		$('.cabs').prop('disabled', true).addClass('ui-disabled'); // Prevents from multitap
 		$('.confButtons').hide('fast');
 		$('#answer').empty().append('<p><b>Veuillez patienter pendant que nous traitons votre demande aupr&egrave;s du chauffeur ...<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCall()" value=""> Retour / Annulation </button></b></p>');
 		$( "#answerBox" ).popup( "open", { positionTo: "window" } );
@@ -1247,15 +1261,16 @@
 				$('#answer').empty().append(data);
 				$('.confButtons').show('fast');
 				//$( "#answerBox" ).popup( "open", { positionTo: "window" } );
-				/*
-				var box = confirm(data);
-				if (box == true) {
-					parent.location.href='taxipad_portal.php';
-				}
-				else {
-					parent.location.href='taxipad_portal.php';
-				}
-				*/
+				badgeNumber = 1;
+				toNotify = data.split("<", 1);
+				cordova.plugins.notification.local.schedule({
+					id: 1,
+					title: "MonTaxi",
+					text: toNotify,
+					led: "E7B242",
+					badge: badgeNumber,
+					data: { data:toNotify }
+				});
 				//return false;
 			}
 		}).done(function(data) {
@@ -1493,7 +1508,7 @@
 				</div>
 			</div>
         </div>
-        <div data-role="footer" id="footer_map" data-fullscreen="true">
+        <div data-role="footer" id="footer_map" data-position="fixed" data-fullscreen="true">
 			<div id="deliv-hide" style="width: 0px; height: 0px; visibility:hidden;">
 				<input type="button" onClick="" id="deliver" value="" />
 			</div>
