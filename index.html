@@ -967,6 +967,9 @@
 			});
 		}}); 
 		
+        $('.cabs').click(function (event) {
+			event.preventDefault();
+		}
         // Auto Click and deliver courses to cabs
         $('#deliver').click(function () {
                                  
@@ -1490,7 +1493,7 @@
     </div>
     <div data-role="page" data-theme="c" id="map_page"">
         <div class="ui-content" role="main" id="map">
-			<div data-role="popup" data-theme="c" id="answerBox" data-dismissible="false" data-position-to="window">
+			<div data-role="popup" data-theme="c" id="answerBox" data-dismissible="false" data-position-to="window" data-overlay-theme="b">
 				<div data-theme="c" data-role="header">
 					<h1>
 						Confirmation
