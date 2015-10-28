@@ -969,7 +969,7 @@
 		
         $('.cabs').click(function (event) {
 			event.preventDefault();
-		}
+		});
         // Auto Click and deliver courses to cabs
         $('#deliver').click(function () {
                                  
@@ -1237,7 +1237,7 @@
     function sendJob(url)
     {
 		//$.mobile.loading( "show" );
-		//$('.cabs').prop('disabled', true).addClass('ui-disabled'); // Prevents from multitap
+		$('.cabs').prop('disabled', true).addClass('ui-disabled'); // Prevents from multitap
 		$('.confButtons').hide('fast');
 		$('.whatNext').hide('fast');
 		$( "#answerBox" ).popup( "open" );
