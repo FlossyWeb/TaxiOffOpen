@@ -26,8 +26,8 @@
 	<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
     <link type="text/css" rel="stylesheet" href="css/jqm-datebox-1.4.5.min.css" />
     <link type="text/css" rel="stylesheet" href="css/dcvpad.css" />
-	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 	<script type="text/javascript">
         $( document ).on( "mobileinit", function() {
             // Make your jQuery Mobile framework configuration changes here!
@@ -146,7 +146,7 @@
 		// GESTION DES BOUTONS MATERIEL
 		// Bouton retour
 		function onBackKeyDown() {
-			navigator.notification.alert('Veuillez ne pas quitter monTaxi pendant la recheche de taxi disponibles');
+			navigator.notification.alert("Veuillez ne pas quitter monTaxi pendant la recheche de taxi disponibles", alertDismissed, 'MonTaxi', 'OK');
 		}
 		function onResume() {
 			if((navigator.network.connection.type == Connection.NONE) || !window.jQuery){
@@ -1274,7 +1274,7 @@
 				});
 				//return false;
 			}
-		}).done(function(data) {
+		}).always(function(data) {
 			setTimeout('check_answer()', 2000);
 		});
     }
