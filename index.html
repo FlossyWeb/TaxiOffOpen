@@ -1234,14 +1234,14 @@
     function sendJob(url)
     {
 		//$.mobile.loading( "show" );
-		$('.cabs').prop('disabled', true).addClass('ui-disabled'); // Prevents from multitap
+		//$('.cabs').prop('disabled', true).addClass('ui-disabled'); // Prevents from multitap
 		$('.confButtons').hide('fast');
 		$('#answer').empty().append('<p><b>Veuillez patienter pendant que nous traitons votre demande aupr&egrave;s du chauffeur ...<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCall()" value=""> Retour / Annulation </button></b></p>');
 		$( "#answerBox" ).popup( "open", { positionTo: "window" } );
 		$.post("https://www.mytaxiserver.com/appserver/open_diary_app_share.php", url, function(data) {
 			hail_id = data.hail_id;
 			//taxi_phone_number = data.taxi_phone_number;
-		}, "json").done(function() { check_answer(); }).fail(function() { alert('Erreur !') });
+		}, "json").done(function() { setTimeout('check_answer()', 1000); }).fail(function() { alert('Erreur !') });
     }
 	
     function check_answer()
@@ -1262,7 +1262,8 @@
 				$('.confButtons').show('fast');
 				//$( "#answerBox" ).popup( "open", { positionTo: "window" } );
 				badgeNumber = 1;
-				toNotify = data.split("<", 1);
+				//toNotify = data.split("<", 1);
+				toNotify = "Le statut de votre demande a changé, veuillez consulter cette mise à jour ici.";
 				cordova.plugins.notification.local.schedule({
 					id: 1,
 					title: "MonTaxi",
