@@ -1234,8 +1234,9 @@
     function sendJob(url)
     {
 		//$.mobile.loading( "show" );
-		//$('.cabs').prop('disabled', true).addClass('ui-disabled'); // Prevents from multitap
+		$('.cabs').prop('disabled', true).addClass('ui-disabled'); // Prevents from multitap
 		$('.confButtons').hide('fast');
+		$('.whatNext').hide('fast');
 		$('#answer').empty().append('<p><b>Veuillez patienter pendant que nous traitons votre demande aupr&egrave;s du chauffeur ...<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCall()" value=""> Retour / Annulation </button></b></p>');
 		$( "#answerBox" ).popup( "open" );
 		$.post("https://www.mytaxiserver.com/appserver/open_diary_app_share.php", url, function(data) {
@@ -1295,7 +1296,7 @@
 		//clearTimeout(endcourse);
 		cancel(idcourse);
 		$('#map').gmap('destroy');
-		$( "#backPop" ).popup( "open", { positionTo: "window" } );
+		$( "#backPop" ).popup( "open" );
 		var wait2getBack = setTimeout( function () {
 			//document.location.href='index.html';
 			$.mobile.pageContainer.pagecontainer("change", "#infos", { transition: "slide"} );
@@ -1319,13 +1320,21 @@
 		if(action==1) {
 			// Client Agrees...
 			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
-				document.location.href=flag;
+				$('.whatNext').empty().append('<p><b>Vous avez accept&eacute; la course, le chauffeur se rend sur place, un mail vous a &eacute;t&eacute; envoy&eacute; et vous allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
+				$('.whatNext').show('fast');
+				setTimeout(function() { 
+					document.location.href=flag;
+				}, 6000);
 			});
 		}
 		else {
 			// Client Abort...
 			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer").done(function(data) {
-				document.location.href=flag;
+				$('.whatNext').empty().append('<p><b>Vous avez refus&eacute; la course et allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
+				$('.whatNext').show('fast');
+				setTimeout(function() { 
+					document.location.href=flag;
+				}, 1000);
 			});
 		}
     }
@@ -1493,6 +1502,7 @@
 						<input type="button" value="ACCEPTER" onClick="gobackOpen('index.html', '1')"/>
 						<input type="button" value="REFUSER" onClick="gobackOpen('index.html', '0')"/>
 					</div>
+					<div class="whatNext"></div>
 				</div>
 			</div>
 			<div data-role="popup" data-theme="c" id="backPop" data-dismissible="false" data-position-to="window" data-overlay-theme="b">
@@ -1517,8 +1527,8 @@
 				<div id="dblinks">
 				</div>
 			</div>
-			<p><strong>Veuillez S&eacute;lectionner un des taxis ci-dessus et le choisir
-			<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCall()" value=""> Retour / Annulation </button></strong></p>
+			<p>Veuillez S&eacute;lectionner un des taxis ci-dessus et le choisir
+			<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCall()" value=""> Retour / Annulation </button></p>
         </div>
     </div>
     <div data-role="page" data-theme="c" id="connect">
