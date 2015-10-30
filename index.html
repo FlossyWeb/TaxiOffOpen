@@ -88,7 +88,8 @@
 	var lng = 0;
 	var badgeNumber = 1;
 	var toNotify;
-
+	var answerBoxPoped=0;
+	
 	// Scanner
 	var scanner;
 	// Detect wether it is an App or WebApp
@@ -967,9 +968,6 @@
 			});
 		}}); 
 		
-        $('.cabs').click(function (event) {
-			event.preventDefault();
-		});
         // Auto Click and deliver courses to cabs
         $('#deliver').click(function () {
                                  
@@ -1240,7 +1238,6 @@
 		$('.cabs').prop('disabled', true).addClass('ui-disabled'); // Prevents from multitap
 		$('.confButtons').hide('fast');
 		$('.whatNext').hide('fast');
-		$( "#answerBox" ).popup( "open" );
 		$('#answer').empty().append('<p><b>Veuillez patienter pendant que nous traitons votre demande aupr&egrave;s du chauffeur ...<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCall()" value=""> Retour / Annulation </button></b></p>');
 		$.post("http://www.mytaxiserver.com/appserver/open_diary_app_share.php", url, function(data) {
 			hail_id = data.hail_id;
@@ -1251,6 +1248,10 @@
     function check_answer()
     {
 		//dep = $.sessionStorage.getItem('dep');
+		if(answerBoxPoped==0) {
+			$( "#answerBox" ).popup( "open", { positionTo: "window" } );
+			answerBoxPoped=1;
+		}
 		$.post("https://www.mytaxiserver.com/appserver/open_status.php?hail_id=" + hail_id + "&check=1" , {}, function(data){ 
 			if (data != 0)
 			{
@@ -1325,6 +1326,7 @@
 			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
 				$('.whatNext').empty().append('<p><b>Vous avez accept&eacute; la course, le chauffeur se rend sur place, un mail vous a &eacute;t&eacute; envoy&eacute; et vous allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
 				$('.whatNext').show('fast');
+				answerBoxPoped=0;
 				setTimeout(function() { 
 					document.location.href=flag;
 				}, 6000);
@@ -1335,6 +1337,7 @@
 			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer").done(function(data) {
 				$('.whatNext').empty().append('<p><b>Vous avez refus&eacute; la course et allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
 				$('.whatNext').show('fast');
+				answerBoxPoped=0;
 				setTimeout(function() { 
 					document.location.href=flag;
 				}, 1000);
