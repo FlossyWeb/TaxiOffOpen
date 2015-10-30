@@ -1234,7 +1234,7 @@
 	
     function sendJob(url)
     {
-		//$.mobile.loading( "show" );
+		$.mobile.loading( "show" );
 		$('.cabs').prop('disabled', true).addClass('ui-disabled'); // Prevents from multitap
 		$('.confButtons').hide('fast');
 		$('.whatNext').hide('fast');
@@ -1242,7 +1242,11 @@
 		$.post("http://www.mytaxiserver.com/appserver/open_diary_app_share.php", url, function(data) {
 			hail_id = data.hail_id;
 			//taxi_phone_number = data.taxi_phone_number;
-		}, "json").done(function() { setTimeout('check_answer()', 1000); }).fail(function() { alert('Erreur !') });
+		}, "json").done(function() { 
+			setTimeout('check_answer()', 500);
+			//check_answer();
+			$.mobile.loading( "hide" );
+		}).fail(function() { alert('Erreur !') });
     }
 	
     function check_answer()
@@ -1300,7 +1304,7 @@
 		//clearTimeout(endcourse);
 		cancel(idcourse);
 		$('#map').gmap('destroy');
-		$( "#backPop" ).popup( "open" );
+		$( "#backPop" ).popup( "open", { positionTo: "window" } );
 		var wait2getBack = setTimeout( function () {
 			document.location.href='index.html';
 			//$.mobile.pageContainer.pagecontainer("change", "#infos", { transition: "slide"} );
@@ -1321,6 +1325,7 @@
     {
 		$('#dblinks').empty();
 		idcourse=''; // reset idcourse
+		$('.confButtons').hide('slow');
 		if(action==1) {
 			// Client Agrees...
 			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
