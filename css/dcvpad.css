@@ -100,7 +100,7 @@ ul, li {
 	-moz-border-radius: 6px;
 	border-radius: 6px;
 }
-#map, #follow_map, #fleet_map {
+#map, #follow_map, #map_open, #follow_map_open, #fleet_map {
 	position:absolute;
 	width: 100%;
 	height: 100%;
@@ -109,7 +109,7 @@ ul, li {
 .wait {
 	z-index: 100;
 }
-#footer_map {
+#footer_map, #footer_map_open {
 	text-align: center;
 }
 .cancel {
