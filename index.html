@@ -1471,7 +1471,7 @@
 				url = url.replace(/'/g, "&rsquo;");
 				url = url.replace(/(?:\r\n|\r|\n)/g, '<br/>'); // Replaces line breaks by <br/>
 				mapEvent.addMarker({ id: i ,'position': latlng, 'bounds': true, 'title': name, 'icon': cabIcon }).click(function() {
-					infoCont = '<div id="infoCont"><p style="color:#333;"><b>' + name + ' est &agrave; ' + parseFloat(distance).toFixed(1) + ' Km de vous, infos: ' + address+ '</b></p></div>';
+					infoCont = '<div id="infoCont"><p style="color:#333;"><b>' + name + ' est &agrave; ' + parseFloat(distance).toFixed(1) + ' Km de vous.<br>' + address+ '</b></p></div>';
 					callBtn='<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJobOpen(\''+ url +'\')">Choisir</button>';
 					//mapEvent.openInfoWindow({ 'content':  infoCont}, this);
 					mapEvent.openInfoWindow({ 'content':  infoCont+callBtn}, this);
@@ -1730,7 +1730,6 @@
 			setTimeout('check_answer()', 2000);
 		});
     }
-
     function cancel(idcourse)
     {
 		//navigator.notification.alert(idcourse);
@@ -1767,14 +1766,14 @@
     {
 		//$('#dblinks').empty();
 		idcourse=''; // reset idcourse
-		$('#answer').empty().append('Un instant SVP');
+		$('#answer').empty().append('<p><b>Veuillez patienter un instant SVP</b></p>');
 		$('.confButtons').hide('fast');
 		if(action==1) {
 			// Client Agrees...
 			//$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
 			$.post("http://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
 				//$('.whatNext').empty().append('<p><b>Vous avez accept&eacute; la course, le chauffeur se rend sur place, un mail vous a &eacute;t&eacute; envoy&eacute; et vous allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
-				$('#answer').empty();
+				$('#answer').empty().append('<p><b>Le chauffeur va maintenant vous rejoindre, voici les actions disponibles:</b></p>');
 				$('.whatNext').empty().append(data);
 				$('.whatNext').show('fast');
 				answerBoxOpenPoped=0;
@@ -1801,9 +1800,9 @@
 			});
 		}
     }
-    function processMap()
+    function refreshApp()
     {
-        $.mobile.pageContainer.pagecontainer("change", "#map_page", { transition: "slide"} );
+		document.location.href='index.html';
     }
     </script>
     </head>
