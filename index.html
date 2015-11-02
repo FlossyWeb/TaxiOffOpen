@@ -1180,13 +1180,16 @@
 	});
 	////////////////////////////////////////////////////////////
 	
-	function followOpenCab(hailToFollow)
+	function followOpenCab(hailToFollow, frdv)
 	{
 		//$.sessionStorage.setItem('hail_id', hailToFollow);
+		$.sessionStorage.setItem('frdv', frdv);
 		$.mobile.pageContainer.pagecontainer("change", "#follow_open", { transition: "slide"} );
 	}
 	$('#follow_open').live('pagecreate', function() {
 		//hail_id = $.sessionStorage.getItem('hail_id');
+		var frdv = $.sessionStorage.getItem('frdv');
+		alert(hail_id + " - " + frdv);
 		$('#follow_map_open').gmap({'center': mobileMap.center, 'zoom': mobileMap.zoom, 'disableDefaultUI':true, 'mapTypeId': google.maps.MapTypeId.ROADMAP, 'callback': function() {
 			var self = this;
 			navigator.geolocation.getCurrentPosition(function(position, status) {
@@ -1762,12 +1765,14 @@
     {
 		//$('#dblinks').empty();
 		idcourse=''; // reset idcourse
-		$('.confButtons').hide('slow');
+		$('#answer').empty().append('Un instant SVP');
+		$('.confButtons').hide('fast');
 		if(action==1) {
 			// Client Agrees...
 			//$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
 			$.post("http://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
 				//$('.whatNext').empty().append('<p><b>Vous avez accept&eacute; la course, le chauffeur se rend sur place, un mail vous a &eacute;t&eacute; envoy&eacute; et vous allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
+				$('#answer').empty();
 				$('.whatNext').empty().append(data);
 				$('.whatNext').show('fast');
 				answerBoxOpenPoped=0;
@@ -1777,14 +1782,13 @@
 					document.location.href=flag;
 				}, 6000);
 				*/
-			}).fail(function (jqXHR, textStatus, errorThrown) {
-				navigator.notification.alert('Erreur inconnue, le serveur ou la connexion internet sont indisponibles. ' + textStatus+', '+ errorThrown, alertDismissed, 'MonTaxi Erreur', 'OK');
 			});
 		}
 		else {
 			// Client Abort...
 			//$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer").done(function(data) {
 			$.post("http://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer").done(function(data) {
+				$('#answer').empty();
 				$('.whatNext').empty().append('<p><b>Vous avez refus&eacute; la course et allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
 				$('.whatNext').show('fast');
 				answerBoxOpenPoped=0;
@@ -2170,8 +2174,8 @@
         </div>
         <div data-role="footer" id="footer_map" data-position="fixed" data-fullscreen="true">
             <center><p>
-            	Vous ne pouvez suivre un taxi que 30 minutes avant le RDV.<br>
-                Les positions sont actualis&eacute;es toutes les 30 secondes.
+            	Vous ne pouvez suivre un taxi que quelques minutes avant le RDV.<br>
+                Les positions sont actualis&eacute;es toutes les 10 secondes.
 				<button onClick="goback('index.html')" class="ui-btn ui-btn-icon-left ui-corner-all ui-shadow ui-icon-power"><p style="font-size:16px"><b>Arr&ecirc;ter</b></p></button>
             </p></center>
         </div>
