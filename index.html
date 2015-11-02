@@ -65,6 +65,7 @@
 	var idcourse = '';
 	var dep = '';
 	var zip = '';
+	var insee = '';
 	var time;
 	var endcourse; // Clears the timeout
 	var regName1 = $.localStorage.getItem('regName1');
@@ -89,6 +90,7 @@
 	var badgeNumber = 1;
 	var toNotify;
 	var answerBoxOpenPoped=0;
+	var stopCheckAnswer=false;
 	
 	// Scanner
 	var scanner;
@@ -874,6 +876,37 @@
 		}
 	}
 	function codeLatLng(position) {
+		// Using http://adresse.data.gouv.fr
+		var lat = position.coords.latitude;
+		var lng = position.coords.longitude;
+		//http://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357&type=street
+		$.get('http://api-adresse.data.gouv.fr/reverse/', {lat: lat, lon: lng, type: ''}, function(data) {
+			//alert(data.features[0].properties.label+' - '+data.features[0].properties.postcode);
+			if(data.features[0].properties.label!='baninfo') {
+				// Reverse geocoding is OK...
+				$('#addressInput').val(data.features[0].properties.label);
+				$('#addressInput2').val(data.features[0].properties.label);
+				insee = data.features[0].properties.citycode;
+				zip = data.features[0].properties.postcode;
+				dep = zip.substring(0, 2);
+				$.sessionStorage.setItem('dep', dep);
+			}
+			else {
+				if(app) navigator.notification.alert('Adresse inconnue !! Veuillez la saisir manuellement SVP.', alertDismissed, 'MonTaxi', 'OK');
+				else alert('Adresse inconnue !! Veuillez la saisir manuellement SVP.');
+			}
+		}, "json");
+		/*
+		{"type": "FeatureCollection", "version": "draft", "attribution": "BAN", 
+		"features": [{"type": "Feature"
+		, "properties": {"type": "street", "city": "Marseille", "citycode": "13201", "postcode": "13001", "distance"
+		: 53, "score": 0.9999988465174383, "name": "Cours Franklin Roosevelt", "context": "13, Bouches-du-Rh
+		\u00f4ne, Provence-Alpes-C\u00f4te d'Azur", "id": "13201_3738_909683", "label": "Cours Franklin Roosevelt
+		 13001 Marseille"}, "geometry": {"type": "Point", "coordinates": [5.387121, 43.298994]}}], "licence"
+		: "ODbL 1.0"}
+		*/
+	}
+	function codeLatLngGmaps(position) {
 		var geocoder = new google.maps.Geocoder();
 		var lat = position.coords.latitude;
 		var lng = position.coords.longitude;
@@ -1147,23 +1180,13 @@
 	});
 	////////////////////////////////////////////////////////////
 	
-	function followOpenCab(ftaxi, fidcourse, fdep, ftel, frdv, ftable)
+	function followOpenCab(hailToFollow)
 	{
-		$.sessionStorage.setItem('ftaxi', ftaxi);
-		$.sessionStorage.setItem('fidcourse', fidcourse);
-		$.sessionStorage.setItem('fdep', fdep);
-		$.sessionStorage.setItem('ftel', ftel);
-		$.sessionStorage.setItem('frdv', frdv);
-		$.sessionStorage.setItem('ftable', ftable);
+		//$.sessionStorage.setItem('hail_id', hailToFollow);
 		$.mobile.pageContainer.pagecontainer("change", "#follow_open", { transition: "slide"} );
 	}
 	$('#follow_open').live('pagecreate', function() {
-		var ftaxi = $.sessionStorage.getItem('ftaxi');
-		var fidcourse = $.sessionStorage.getItem('fidcourse');
-		var fdep = $.sessionStorage.getItem('fdep');
-		var ftel = $.sessionStorage.getItem('ftel');
-		var frdv = $.sessionStorage.getItem('frdv');
-		var ftable = $.sessionStorage.getItem('ftable');
+		//hail_id = $.sessionStorage.getItem('hail_id');
 		$('#follow_map_open').gmap({'center': mobileMap.center, 'zoom': mobileMap.zoom, 'disableDefaultUI':true, 'mapTypeId': google.maps.MapTypeId.ROADMAP, 'callback': function() {
 			var self = this;
 			navigator.geolocation.getCurrentPosition(function(position, status) {
@@ -1202,13 +1225,14 @@
 					else alert('ADRESSE RDV : '+address+' NON TROUVEE ');
 				}
 			});
-			$.post('https://www.mytaxiserver.com/appserver/open_follow.php', { taxi: ftaxi, idcourse: fidcourse, dep: fdep, tel: ftel, table: ftable }, function(data){
+			$.post('https://www.mytaxiserver.com/appserver/open_follow.php', { hail_id: hail_id }, function(data){
 				if(data.ok) {
 					var latlng = new google.maps.LatLng(data.lat, data.lng);
 					var display_name = 'Taxi ' + data.name;
 					var cabIcon = 'visuels/taxi_loc_icon.png';
 					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'title': display_name, 'icon': cabIcon }).click(function() {
-						infoCont = '<p style="color:#333;"><b>taxi n&deg; ' + data.name + ' - ' + data.address+ ' &agrave; ' + data.timestamp+ '</b></p>';
+						//infoCont = '<p style="color:#333;"><b>taxi n&deg; ' + data.name + ' - ' + data.address+ ' &agrave; ' + data.timestamp+ '</b></p>';
+						infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
 						self.openInfoWindow({ 'content':  infoCont}, this);
 					});
 				}
@@ -1220,14 +1244,14 @@
 				}
 			}, "json");
 			var track = setInterval( function () {
-				$.post('https://www.mytaxiserver.com/appserver/open_follow.php', { taxi: ftaxi, idcourse: fidcourse, dep: fdep, tel: ftel, table: ftable }, function(data){
+				$.post('https://www.mytaxiserver.com/appserver/open_follow.php', {  hail_id: hail_id }, function(data){
 					var markerCab = self.get('markers')['cab'];
 					markerCab.setVisible(false);
 					var latlng = new google.maps.LatLng(data.lat, data.lng);
 					var display_name = 'Taxi ' + data.name;
 					var cabIcon = 'visuels/taxi_loc_icon.png';
 					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'title': display_name, 'icon': cabIcon }).click(function() {
-						infoCont = '<p style="color:#333;"><b>taxi n&deg; ' + data.name + ' - ' + data.address+ ' &agrave; ' + data.timestamp+ '</b></p>';
+						infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
 						self.openInfoWindow({ 'content':  infoCont}, this);
 					});
 					var markerYou = self.get('markers')['you'];
@@ -1241,7 +1265,7 @@
 						});
 					}, showError,{enableHighAccuracy:true, maximumAge:0});
 				}, "json");
-			}, 30000); 
+			}, 10000);
 		}});
 	});
 	
@@ -1532,7 +1556,7 @@
 		dep = $.sessionStorage.getItem('dep');
 		i = 0; // We need to make any numreq unique on that one !!
 		//$.post("https://www.mytaxiserver.com/appserver/app_dcvp_xml.php", { lat: rdvlat, lng: rdvlng, type: typecar, howmany: howMany, cb: cb, group: '1', dep: '', pass: 'true'}, function(xml){
-		$.post('http://www.mytaxiserver.com/appserver/app_dcvp_xml.php', {lat: rdvlat, lng: rdvlng, type: typecar, howmany: howMany, cb: cb, group: group, dep: dep, zip: zip, pass: 'true'}, function(xml){
+		$.post('http://www.mytaxiserver.com/appserver/app_dcvp_xml.php', {lat: rdvlat, lng: rdvlng, type: typecar, howmany: howMany, cb: cb, group: group, dep: dep, zip: zip, insee: insee, pass: 'true'}, function(xml){
 			$(xml).find('marker').each(function(){
 				var name = $(this).attr('name');
 				var address = $(this).attr('address');
@@ -1606,36 +1630,39 @@
 			$( "#answerBoxOpen" ).popup( "open", { positionTo: "window" } );
 			answerBoxOpenPoped=1;
 		}
-		$.post("https://www.mytaxiserver.com/appserver/open_status.php?hail_id=" + hail_id + "&check=1" , {}, function(data){ 
-			if (data != 0)
-			{
-				//clearInterval(time);
-				//clearTimeout(endcourse);
-				//cancel(idcourse);
-				//document.getElementById('stop').value = 1;
-				//var box = navigator.notification.alert(data);
-				//stopCallOpen();
-				//var box = navigator.notification.alert(data);
-				//$('#thanksResults').empty().append(data);
-				$('#answer').empty().append(data);
-				$('.confButtons').show('fast');
-				//$( "#answerBoxOpen" ).popup( "open", { positionTo: "window" } );
-				badgeNumber = 1;
-				//toNotify = data.split("<", 1);
-				toNotify = "Le statut de votre demande a changé, veuillez consulter cette mise à jour ici.";
-				cordova.plugins.notification.local.schedule({
-					id: 1,
-					title: "MonTaxi",
-					text: toNotify,
-					led: "E7B242",
-					badge: badgeNumber,
-					data: { data:toNotify }
-				});
-				//return false;
-			}
-		}).always(function(data) {
-			setTimeout('check_answer_open()', 2000);
-		});
+		if(!stopCheckAnswer) {
+			$.post("https://www.mytaxiserver.com/appserver/open_status.php?hail_id=" + hail_id + "&check=1" , {}, function(data){ 
+				if (data != 0)
+				{
+					stopCheckAnswer=true;
+					//clearInterval(time);
+					//clearTimeout(endcourse);
+					//cancel(idcourse);
+					//document.getElementById('stop').value = 1;
+					//var box = navigator.notification.alert(data);
+					//stopCallOpen();
+					//var box = navigator.notification.alert(data);
+					//$('#thanksResults').empty().append(data);
+					$('#answer').empty().append(data);
+					$('.confButtons').show('fast');
+					//$( "#answerBoxOpen" ).popup( "open", { positionTo: "window" } );
+					badgeNumber = 1;
+					//toNotify = data.split("<", 1);
+					toNotify = "Le statut de votre demande a changé, veuillez consulter cette mise à jour ici.";
+					cordova.plugins.notification.local.schedule({
+						id: 1,
+						title: "MonTaxi",
+						text: toNotify,
+						led: "E7B242",
+						badge: badgeNumber,
+						data: { data:toNotify }
+					});
+					//return false;
+				}
+			}).always(function(data) {
+				setTimeout('check_answer_open()', 2000);
+			});
+		}
     }
 
     function cancelOpen(idcourse)
@@ -1653,7 +1680,7 @@
 		//clearInterval(time);
 		//clearTimeout(endcourse);
 		cancelOpen(idcourse);
-		$('#map').gmap('destroy');
+		//$('#map').gmap('destroy');
 		$('#map_open').gmap('destroy');
 		$( "#backPopOpen" ).popup( "open", { positionTo: "window" } );
 		var wait2getBack = setTimeout( function () {
@@ -1739,12 +1766,16 @@
 		if(action==1) {
 			// Client Agrees...
 			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
-				$('.whatNext').empty().append('<p><b>Vous avez accept&eacute; la course, le chauffeur se rend sur place, un mail vous a &eacute;t&eacute; envoy&eacute; et vous allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
+				//$('.whatNext').empty().append('<p><b>Vous avez accept&eacute; la course, le chauffeur se rend sur place, un mail vous a &eacute;t&eacute; envoy&eacute; et vous allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
+				$('.whatNext').empty().append(data);
 				$('.whatNext').show('fast');
 				answerBoxOpenPoped=0;
+				stopCheckAnswer=false;
+				/*
 				setTimeout(function() { 
 					document.location.href=flag;
 				}, 6000);
+				*/
 			});
 		}
 		else {
