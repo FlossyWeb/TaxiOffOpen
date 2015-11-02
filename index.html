@@ -1776,6 +1776,8 @@
 					document.location.href=flag;
 				}, 6000);
 				*/
+			}).fail(function (jqXHR, textStatus, errorThrown) {
+				navigator.notification.alert('Erreur inconnue, le serveur ou la connexion internet sont indisponibles. ' + textStatus+', '+ errorThrown, alertDismissed, 'MonTaxi Erreur', 'OK');
 			});
 		}
 		else {
@@ -1784,6 +1786,7 @@
 				$('.whatNext').empty().append('<p><b>Vous avez refus&eacute; la course et allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
 				$('.whatNext').show('fast');
 				answerBoxOpenPoped=0;
+				stopCheckAnswer=false;
 				setTimeout(function() { 
 					document.location.href=flag;
 				}, 1000);
