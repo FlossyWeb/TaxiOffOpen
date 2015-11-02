@@ -1183,13 +1183,13 @@
 	function followOpenCab(hailToFollow, frdv)
 	{
 		//$.sessionStorage.setItem('hail_id', hailToFollow);
-		$.sessionStorage.setItem('frdv', frdv);
+		//$.sessionStorage.setItem('frdv', frdv);
 		$.mobile.pageContainer.pagecontainer("change", "#follow_open", { transition: "slide"} );
 	}
 	$('#follow_open').live('pagecreate', function() {
 		//hail_id = $.sessionStorage.getItem('hail_id');
 		var frdv = $.sessionStorage.getItem('frdv');
-		alert(hail_id + " - " + frdv);
+		//alert(hail_id + " - " + frdv);
 		$('#follow_map_open').gmap({'center': mobileMap.center, 'zoom': mobileMap.zoom, 'disableDefaultUI':true, 'mapTypeId': google.maps.MapTypeId.ROADMAP, 'callback': function() {
 			var self = this;
 			navigator.geolocation.getCurrentPosition(function(position, status) {
@@ -1200,6 +1200,7 @@
 					self.openInfoWindow({ 'content':  '<p style="color:#09F;"><b>Vous &Ecirc;tes ici</b></p>' }, this);
 				});
 			}, showError,{enableHighAccuracy:true, maximumAge:0});
+			/*
 			var geocoder = new google.maps.Geocoder();
 			var address = frdv;
 			geocoder.geocode({address: address}, function(results, status) {
@@ -1228,6 +1229,7 @@
 					else alert('ADRESSE RDV : '+address+' NON TROUVEE ');
 				}
 			});
+			*/
 			$.post('https://www.mytaxiserver.com/appserver/open_follow.php', { hail_id: hail_id }, function(data){
 				if(data.ok) {
 					var latlng = new google.maps.LatLng(data.lat, data.lng);
