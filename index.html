@@ -1466,16 +1466,27 @@
 				var latlng = new google.maps.LatLng(lat2, lng2);
 				var display_name = 'Taxi ' + name;
 				var cabIcon = 'visuels/taxi_loc_icon.png';
+				var otherCabIcon = 'visuels/not_taxi_loc_icon.png';
 				var url = 'taxi=' + name + '&tel=' + address + '&cabid=' + cabid + '&idcourse=' + idcourse + '&num_req=' + num_req + '&rdvpoint=' + rdvpoint + '&lat=' + rdvlat + '&lng=' + rdvlng + '&comments=' + comments + '&cell=' + cell + '&when=' + when + '&date=' + date + '&operator=' + operator + '&appname=' + appname + '&dep='+dep+'&group=1&ack=0&db=1';
 				//url = 'rdvpoint=' + rdvpoint + '&operator=' + operator + '&lat=' + rdvlat + '&lng=' + rdvlng + '&cell=' + cell + '&appname=' + appname + '&cabid=' + cabid + '&dep='+dep+'&group=1&ack=0&db=1';
 				url = url.replace(/'/g, "&rsquo;");
 				url = url.replace(/(?:\r\n|\r|\n)/g, '<br/>'); // Replaces line breaks by <br/>
-				mapEvent.addMarker({ id: i ,'position': latlng, 'bounds': true, 'title': name, 'icon': cabIcon }).click(function() {
-					infoCont = '<div id="infoCont"><p style="color:#333;"><b>' + name + ' est &agrave; ' + parseFloat(distance).toFixed(1) + ' Km de vous.<br>' + address+ '</b></p></div>';
-					callBtn='<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJobOpen(\''+ url +'\')">Choisir</button>';
-					//mapEvent.openInfoWindow({ 'content':  infoCont}, this);
-					mapEvent.openInfoWindow({ 'content':  infoCont+callBtn}, this);
-				});
+				if(appname=="montaxi") {
+					mapEvent.addMarker({ id: i ,'position': latlng, 'bounds': true, 'title': name, 'icon': cabIcon }).click(function() {
+						infoCont = '<div id="infoCont"><p style="color:#333;"><b>' + name + ' est &agrave; ' + parseFloat(distance).toFixed(1) + ' Km de vous.<br>' + address+ '</b></p></div>';
+						callBtn='<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJobOpen(\''+ url +'\')">Choisir</button>';
+						//mapEvent.openInfoWindow({ 'content':  infoCont}, this);
+						mapEvent.openInfoWindow({ 'content':  infoCont+callBtn}, this);
+					});
+				}
+				else {
+					mapEvent.addMarker({ id: i ,'position': latlng, 'bounds': true, 'title': name, 'icon': otherCabIcon }).click(function() {
+						infoCont = '<div id="infoCont"><p style="color:#333;"><b>' + name + ' est &agrave; ' + parseFloat(distance).toFixed(1) + ' Km de vous.<br>' + address+ '</b></p></div>';
+						callBtn='<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJobOpen(\''+ url +'\')">Choisir</button>';
+						//mapEvent.openInfoWindow({ 'content':  infoCont}, this);
+						mapEvent.openInfoWindow({ 'content':  infoCont+callBtn}, this);
+					});
+				}
 				//mapEvent.addBounds(latlng);
 				//$.post("https://www.mytaxiserver.com/appserver/diary_app_share.php", url, function(data) {});
 				//$('#dblinks').append($('<input class="cabs" id="' + i + '" type="hidden" onclick="sendJobOpen(\''+ url +'\')" />'));
@@ -1483,7 +1494,7 @@
 				//$('#infoCont').append($('<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJobOpen(\''+ url +'\')">Choisir</button>'));
 			});
 		}, "xml").done(function() { $.mobile.loading( "hide" ); });
-		mapEvent.get('markers').[0].trigger('click');
+		//mapEvent.get('markers').[0].trigger('click');
 		//$.mobile.loading( "hide" );
 		/*
 		if(i==0) {
