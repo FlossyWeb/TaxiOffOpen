@@ -1636,24 +1636,24 @@
 			answerBoxOpenPoped=1;
 		}
 		if(!stopCheckAnswer) {
-			$.post("https://www.mytaxiserver.com/appserver/open_status.php?hail_id=" + hail_id + "&check=1" , {}, function(data){ 
-				if (data != 0)
+			$.post("https://www.mytaxiserver.com/appserver/open_status_json.php?hail_id=" + hail_id + "&check=1" , {}, function(data){ 
+				if (data.display != 0)
 				{
 					stopCheckAnswer=true;
 					//clearInterval(time);
 					//clearTimeout(endcourse);
 					//cancel(idcourse);
 					//document.getElementById('stop').value = 1;
-					//var box = navigator.notification.alert(data);
+					//var box = navigator.notification.alert(data.display);
 					//stopCallOpen();
-					//var box = navigator.notification.alert(data);
-					//$('#thanksResults').empty().append(data);
-					$('#answer').empty().append(data);
-					$('.confButtons').show('fast');
+					//$('#thanksResults').empty().append(data.display);
+					$('#answer').empty().append(data.display);
+					if(data.status == "accepted_by_taxi") $('.confButtons').show('fast');
+					else $('.whatNext').empty().append('<button onClick="refreshApp()" class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-home">Revenir &agrave; l&rsquo;accueil</button>');
 					//$( "#answerBoxOpen" ).popup( "open", { positionTo: "window" } );
 					badgeNumber = 1;
 					//toNotify = data.split("<", 1);
-					toNotify = "Le statut de votre demande a changé, veuillez consulter cette mise à jour ici.";
+					toNotify = data.display;
 					cordova.plugins.notification.local.schedule({
 						id: 1,
 						title: "MonTaxi",
@@ -1664,7 +1664,7 @@
 					});
 					//return false;
 				}
-			}).always(function(data) {
+			}, "json").always(function(data) {
 				setTimeout('check_answer_open()', 2000);
 			});
 		}
