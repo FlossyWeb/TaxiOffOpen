@@ -1617,7 +1617,7 @@
 		$('.cabs').prop('disabled', true).addClass('ui-disabled'); // Prevents from multitap
 		$('.confButtons').hide('fast');
 		$('.whatNext').hide('fast');
-		$('#answer').empty().append('<p><b>Veuillez patienter pendant que nous traitons votre demande aupr&egrave;s du chauffeur ...<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCallOpen()" value=""> Retour / Annulation </button></b></p>');
+		$('#answerOpen').empty().append('<p><b>Veuillez patienter pendant que nous traitons votre demande aupr&egrave;s du chauffeur ...<button type="button" class="cancel ui-btn ui-btn-b ui-shadow ui-corner-all ui-btn-icon-left ui-icon-delete" id="cancel" onClick="stopCallOpen()" value=""> Retour / Annulation </button></b></p>');
 		$.post("http://www.mytaxiserver.com/appserver/open_diary_app_share.php", url, function(data) {
 			hail_id = data.hail_id;
 			//taxi_phone_number = data.taxi_phone_number;
@@ -1647,7 +1647,7 @@
 					//var box = navigator.notification.alert(data.display);
 					//stopCallOpen();
 					//$('#thanksResults').empty().append(data.display);
-					$('#answer').empty().append(data.display);
+					$('#answerOpen').empty().append(data.display);
 					if(data.status == "accepted_by_taxi") {
 						$('.confButtons').show('fast');
 					}
@@ -1680,7 +1680,7 @@
 		//navigator.notification.alert(idcourse);
 		dep = $.sessionStorage.getItem('dep');
 		if(hail_id!='') {
-			$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer"); 
+			$.post("http://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer"); 
 		}
     }        
 	function stopCallOpen()
@@ -1739,7 +1739,7 @@
     {
 		//navigator.notification.alert(idcourse);
 		dep = $.sessionStorage.getItem('dep');
-        $.post("https://www.mytaxiserver.com/appserver/diary.php?idcourse=" + idcourse + "&dep=" + dep +"&ack=1&db=1&cab_wont=1&del=1"); 
+        $.post("http://www.mytaxiserver.com/appserver/diary.php?idcourse=" + idcourse + "&dep=" + dep +"&ack=1&db=1&cab_wont=1&del=1"); 
     }        
 	function stopCall()
 	{
@@ -1771,14 +1771,14 @@
     {
 		//$('#dblinks').empty();
 		idcourse=''; // reset idcourse
-		$('#answer').empty().append('<p><b>Veuillez patienter un instant SVP</b></p>');
+		$('#answerOpen').empty().append('<p><b>Veuillez patienter un instant SVP</b></p>');
 		$('.confButtons').hide('fast');
 		if(action==1) {
 			// Client Agrees...
 			//$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
 			$.post("http://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
 				//$('.whatNext').empty().append('<p><b>Vous avez accept&eacute; la course, le chauffeur se rend sur place, un mail vous a &eacute;t&eacute; envoy&eacute; et vous allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
-				$('#answer').empty().append('<p><b>Le chauffeur va maintenant vous rejoindre, voici les actions disponibles:</b></p>');
+				$('#answerOpen').empty().append('<p><b>Le chauffeur va maintenant vous rejoindre, voici les actions disponibles:</b></p>');
 				$('.whatNext').empty().append(data);
 				$('.whatNext').show('fast');
 				answerBoxOpenPoped=0;
@@ -1794,7 +1794,7 @@
 			// Client Abort...
 			//$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer").done(function(data) {
 			$.post("http://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer").done(function(data) {
-				$('#answer').empty();
+				$('#answerOpen').empty();
 				$('.whatNext').empty().append('<p><b>Vous avez refus&eacute; la course et allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
 				$('.whatNext').show('fast');
 				answerBoxOpenPoped=0;
@@ -1968,7 +1968,7 @@
 					</h1>
 				</div>
 				<div class="ui-content" role="main">
-					<div id="answer"></div>
+					<div id="answerOpen"></div>
 					<div class="confButtons">
 						<input type="button" value="ACCEPTER" onClick="gobackOpen('index.html', '1')"/>
 						<input type="button" value="REFUSER" onClick="gobackOpen('index.html', '0')"/>
