@@ -1483,6 +1483,7 @@
 				//$('#infoCont').append($('<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJobOpen(\''+ url +'\')">Choisir</button>'));
 			});
 		}, "xml").done(function() { $.mobile.loading( "hide" ); });
+		$('#map_open').gmap('get', 'markers').[0].trigger('click');
 		//$.mobile.loading( "hide" );
 		/*
 		if(i==0) {
