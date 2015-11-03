@@ -1636,7 +1636,7 @@
 			answerBoxOpenPoped=1;
 		}
 		if(!stopCheckAnswer) {
-			$.post("https://www.mytaxiserver.com/appserver/open_status_json.php?hail_id=" + hail_id + "&check=1" , {}, function(data){ 
+			$.post("https://www.mytaxiserver.com/appserver/open_status_json.php?hail_id=" + hail_id + "&dep=" + dep + "&check=1" , {}, function(data){ 
 				if (data.display != 0)
 				{
 					stopCheckAnswer=true;
