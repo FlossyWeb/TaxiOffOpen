@@ -1648,8 +1648,13 @@
 					//stopCallOpen();
 					//$('#thanksResults').empty().append(data.display);
 					$('#answer').empty().append(data.display);
-					if(data.status == "accepted_by_taxi") $('.confButtons').show('fast');
-					else $('.whatNext').empty().append('<button onClick="refreshApp()" class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-home">Revenir &agrave; l&rsquo;accueil</button>');
+					if(data.status == "accepted_by_taxi") {
+						$('.confButtons').show('fast');
+					}
+					else {
+						$('.whatNext').empty().append('<button onClick="refreshApp()" class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-home">Revenir &agrave; l&rsquo;accueil</button>');
+						$('.whatNext').show('fast');
+					}
 					//$( "#answerBoxOpen" ).popup( "open", { positionTo: "window" } );
 					badgeNumber = 1;
 					//toNotify = data.split("<", 1);
