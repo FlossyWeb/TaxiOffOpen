@@ -1199,6 +1199,14 @@
 				self.addMarker({ id: 'you', 'position': latlng, 'bounds': true, 'icon': userIcon }).click(function() {
 					self.openInfoWindow({ 'content':  '<p style="color:#09F;"><b>Vous &Ecirc;tes ici</b></p>' }, this);
 				});
+				self.addShape('Circle', {
+					'strokeWeight': 0, 
+					'fillColor': "#008595", 
+					'fillOpacity': 0.25, 
+					'center': latlng, 
+					'radius': 500, 
+					'clickable': true 
+				});
 			}, showError,{enableHighAccuracy:true, maximumAge:0});
 			/*
 			var geocoder = new google.maps.Geocoder();
@@ -1235,9 +1243,9 @@
 					var latlng = new google.maps.LatLng(data.lat, data.lng);
 					var display_name = 'Taxi ' + data.name;
 					var cabIcon = 'visuels/taxi_loc_icon.png';
-					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'title': display_name, 'icon': cabIcon }).click(function() {
-						//infoCont = '<p style="color:#333;"><b>taxi n&deg; ' + data.name + ' - ' + data.address+ ' &agrave; ' + data.timestamp+ '</b></p>';
-						infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
+					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'title': 'Votre taxi', 'icon': cabIcon }).click(function() {
+						//infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
+						infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a></b></p>';
 						self.openInfoWindow({ 'content':  infoCont}, this);
 					});
 				}
@@ -1255,8 +1263,8 @@
 					var latlng = new google.maps.LatLng(data.lat, data.lng);
 					var display_name = 'Taxi ' + data.name;
 					var cabIcon = 'visuels/taxi_loc_icon.png';
-					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'title': display_name, 'icon': cabIcon }).click(function() {
-						infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
+					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'title': 'Votre taxi', 'icon': cabIcon }).click(function() {
+						infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a></b></p>';
 						self.openInfoWindow({ 'content':  infoCont}, this);
 					});
 					var markerYou = self.get('markers')['you'];
