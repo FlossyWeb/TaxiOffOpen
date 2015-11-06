@@ -1240,19 +1240,19 @@
 			*/
 			$.post('https://www.mytaxiserver.com/appserver/open_follow.php', { hail_id: hail_id }, function(data){
 				if(data.ok) {
-					//alert(data.lat+', '+data.lng+' - '+data.name+' - '+data.address+''+data.timestamp);
 					var latlng = new google.maps.LatLng(data.lat, data.lng);
 					var display_name = 'Taxi ' + data.name;
 					var cabIcon = 'visuels/taxi_loc_icon.png';
-					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'title': 'Votre taxi', 'icon': cabIcon }).click(function() {
+					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'icon': cabIcon }).click(function() {
 						infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: ' + data.address + '<br><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
 						//infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
 						//infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a></b></p>';
 						self.openInfoWindow({ 'content':  infoCont}, this);
 					});
+					alert(data.lat+', '+data.lng+' - '+data.name+' - '+data.address+''+data.timestamp);
 				}
 				else {
-					if(app) navigator.notification.alert('Vous ne pouvez suivre un taxi que 30 minutes avant le RDV !!');
+					if(app) navigator.notification.alert('Vous ne pouvez suivre un taxi que 30 minutes avant le RDV !!', alertDismissed, 'MonTaxi', 'OK');
 					else alert('Vous ne pouvez suivre un taxi que 30 minutes avant le RDV !!');
 					//document.location.href='index.html';
 					$.mobile.pageContainer.pagecontainer("change", "#history", { transition: "slide"} );
@@ -1266,7 +1266,7 @@
 					var latlng = new google.maps.LatLng(data.lat, data.lng);
 					var display_name = 'Taxi ' + data.name;
 					var cabIcon = 'visuels/taxi_loc_icon.png';
-					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'title': 'Votre taxi', 'icon': cabIcon }).click(function() {
+					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'icon': cabIcon }).click(function() {
 						infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
 						//infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a></b></p>';
 						self.openInfoWindow({ 'content':  infoCont}, this);
@@ -1282,7 +1282,7 @@
 						});
 					}, showError,{enableHighAccuracy:true, maximumAge:0});
 				}, "json");
-			}, 10000);
+			}, 20000);
 		}});
 	});
 	
@@ -1489,7 +1489,7 @@
 						callBtn='<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJobOpen(\''+ url +'\')">Choisir</button>';
 						//mapEvent.openInfoWindow({ 'content':  infoCont}, this);
 						mapEvent.openInfoWindow({ 'content':  infoCont+callBtn}, this);
-					}).trigger('click');
+					});
 				}
 				else {
 					mapEvent.addMarker({ id: i ,'position': latlng, 'bounds': true, 'title': name, 'icon': otherCabIcon }).click(function() {
@@ -1506,8 +1506,10 @@
 				//$('#infoCont').append($('<button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check cabs" id="' + i + '" onClick="sendJobOpen(\''+ url +'\')">Choisir</button>'));
 			});
 		}, "xml").done(function() { $.mobile.loading( "hide" ); });
-		//var markerFav = mapEvent.get('markers')['favorite'];
-		//markerFav.trigger('click');
+		setTimeout( function () {
+			var markerFav = mapEvent.get('markers')['favorite'];
+			markerFav.trigger('click');
+		}, 2000);
 		//$.mobile.loading( "hide" );
 		/*
 		if(i==0) {
