@@ -35,10 +35,10 @@
             $.mobile.allowCrossDomainPages = true;
             $.mobile.selectmenu.prototype.options.nativeMenu = false;
 			//$.mobile.ajaxEnabled = false;
-			$.mobile.loader.prototype.options.text = "Veuillez patienter pendant la recherche de taxi disponible. Merci de votre confiance !";
+			$.mobile.loader.prototype.options.text = "Veuillez patienter pendant le chargement. Merci de votre confiance !";
 			$.mobile.loader.prototype.options.textVisible = "true";
 			$.mobile.loader.prototype.options.theme = "a";
-			$.mobile.loader.prototype.options.html = '<span class="ui-bar ui-overlay-a ui-corner-all"><center><img src="visuels/preload_world.gif"/><br><span style="color:#F00;">Veuillez patienter pendant la recherche de taxis disponibles</span><br>Merci de votre confiance !</center></span>';
+			$.mobile.loader.prototype.options.html = '<span class="ui-bar ui-overlay-a ui-corner-all"><center><img src="visuels/preload_world.gif"/><br><span style="color:#F00;">Veuillez patienter pendant le chargement</span><br>Merci de votre confiance !</center></span>';
         });
     </script>    
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -1183,12 +1183,12 @@
 	function followOpenCab(hailToFollow, frdv)
 	{
 		$.sessionStorage.setItem('hail_id', hailToFollow);
-		//$.sessionStorage.setItem('frdv', frdv);
+		$.sessionStorage.setItem('frdv', frdv);
 		$.mobile.pageContainer.pagecontainer("change", "#follow_open", { transition: "slide"} );
 	}
 	$('#follow_open').live('pagecreate', function() {
 		hail_id = $.sessionStorage.getItem('hail_id');
-		//var frdv = $.sessionStorage.getItem('frdv');
+		var frdv = $.sessionStorage.getItem('frdv');
 		//alert(hail_id + " - " + frdv);
 		$('#follow_map_open').gmap({'center': mobileMap.center, 'zoom': mobileMap.zoom, 'disableDefaultUI':true, 'mapTypeId': google.maps.MapTypeId.ROADMAP, 'callback': function() {
 			var self = this;
@@ -1239,6 +1239,7 @@
 			});
 			*/
 			$.post('https://www.mytaxiserver.com/appserver/open_follow.php', { hail_id: hail_id }, function(data){
+				alert(data.ok);
 				if(data.ok) {
 					var latlng = new google.maps.LatLng(data.lat, data.lng);
 					var display_name = 'Taxi ' + data.name;
@@ -1249,7 +1250,7 @@
 						//infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a></b></p>';
 						self.openInfoWindow({ 'content':  infoCont}, this);
 					});
-					alert(data.lat+', '+data.lng+' - '+data.name+' - '+data.address+''+data.timestamp);
+					alert(data.lat+', '+data.lng+' - '+data.name+' - '+data.address+' '+data.timestamp);
 				}
 				else {
 					if(app) navigator.notification.alert('Vous ne pouvez suivre un taxi que 30 minutes avant le RDV !!', alertDismissed, 'MonTaxi', 'OK');
@@ -1282,7 +1283,7 @@
 						});
 					}, showError,{enableHighAccuracy:true, maximumAge:0});
 				}, "json");
-			}, 20000);
+			}, 10000);
 		}});
 	});
 	
