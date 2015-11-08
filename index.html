@@ -877,8 +877,8 @@
 	}
 	function codeLatLng(position) {
 		// Using http://adresse.data.gouv.fr
-		var lat = position.coords.latitude;
-		var lng = position.coords.longitude;
+		lat = position.coords.latitude;
+		lng = position.coords.longitude;
 		//http://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357&type=street
 		$.get('http://api-adresse.data.gouv.fr/reverse/', {lat: lat, lon: lng, type: ''}, function(data) {
 			//alert(data.features[0].properties.label+' - '+data.features[0].properties.postcode);
@@ -908,8 +908,8 @@
 	}
 	function codeLatLngGmaps(position) {
 		var geocoder = new google.maps.Geocoder();
-		var lat = position.coords.latitude;
-		var lng = position.coords.longitude;
+		lat = position.coords.latitude;
+		lng = position.coords.longitude;
 		var latlng = new google.maps.LatLng(lat, lng);
 		geocoder.geocode({'latLng': latlng}, function(results, status) {
 			if (status == google.maps.GeocoderStatus.OK)
@@ -1189,16 +1189,19 @@
 	$('#follow_open').live('pagecreate', function() {
 		hail_id = $.sessionStorage.getItem('hail_id');
 		var frdv = $.sessionStorage.getItem('frdv');
-		//alert(hail_id + " - " + frdv);
+		alert(hail_id + " - " + frdv);
 		$('#follow_map_open').gmap({'center': mobileMap.center, 'zoom': mobileMap.zoom, 'disableDefaultUI':true, 'mapTypeId': google.maps.MapTypeId.ROADMAP, 'callback': function() {
 			var self = this;
 			navigator.geolocation.getCurrentPosition(function(position, status) {
-				var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+				var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+				lat = position.coords.latitude;
+				lng = position.coords.longitude;
 				self.get('map').panTo(latlng);
 				var userIcon = 'visuels/client_loc_icon.png';
 				self.addMarker({ id: 'you', 'position': latlng, 'bounds': true, 'icon': userIcon }).click(function() {
 					self.openInfoWindow({ 'content':  '<p style="color:#09F;"><b>Vous &Ecirc;tes ici</b></p>' }, this);
 				});
+				/*
 				self.addShape('Circle', {
 					'strokeWeight': 0, 
 					'fillColor': "#008595", 
@@ -1207,8 +1210,8 @@
 					'radius': 500, 
 					'clickable': true 
 				});
+				*/
 			}, showError,{enableHighAccuracy:true, maximumAge:0});
-			/*
 			var geocoder = new google.maps.Geocoder();
 			var address = frdv;
 			geocoder.geocode({address: address}, function(results, status) {
@@ -1237,7 +1240,6 @@
 					else alert('ADRESSE RDV : '+address+' NON TROUVEE ');
 				}
 			});
-			*/
 			$.post('https://www.mytaxiserver.com/appserver/open_follow.php', { hail_id: hail_id }, function(data){
 				var latlng = new google.maps.LatLng(data.lat, data.lng);
 				var display_name = 'Taxi ' + data.name;
@@ -1267,6 +1269,8 @@
 					markerYou.setVisible(false);
 					navigator.geolocation.getCurrentPosition(function(position, status) {
 						var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+						lat = position.coords.latitude;
+						lng = position.coords.longitude;
 						self.get('map').panTo(latlng);
 						var userIcon = 'visuels/client_loc_icon.png';
 						self.addMarker({ id: 'you', 'position': latlng, 'bounds': true, 'icon': userIcon }).click(function() {
@@ -1303,7 +1307,7 @@
 		$('#follow_map').gmap({'center': mobileMap.center, 'zoom': mobileMap.zoom, 'disableDefaultUI':true, 'mapTypeId': google.maps.MapTypeId.ROADMAP, 'callback': function() {
 			var self = this;
 			navigator.geolocation.getCurrentPosition(function(position, status) {
-				var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+				var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 				self.get('map').panTo(latlng);
 				var userIcon = 'visuels/client_loc_icon.png';
 				self.addMarker({ id: 'you', 'position': latlng, 'bounds': true, 'icon': userIcon }).click(function() {
@@ -1826,7 +1830,7 @@
     }
 	function callIncident(irdv, ihail, iop, icell, istatus)
 	{ // callIncident(\''.$rdv.'\', \''.$hail_id.'\', \''.$operator.'\', \''.$cell.'\', \''.$status.'\')
-		$.post("https://www.mytaxiserver.com/appserver/open_incident.php" , { rdvpoint: irdv, hail_id: ihail, operator: iop, cell: icell, status: istatus}, function(data){ 
+		$.post("https://www.mytaxiserver.com/appserver/open_incident.php" , { rdvpoint: irdv, hail_id: ihail, operator: iop, cell: icell, status: istatus, db: 'true'}, function(data){ 
 			if (data.ok)
 			{
 				var number = data.taxi_phone_number;
