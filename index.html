@@ -38,7 +38,7 @@
 			$.mobile.loader.prototype.options.text = "Veuillez patienter pendant le chargement. Merci de votre confiance !";
 			$.mobile.loader.prototype.options.textVisible = "true";
 			$.mobile.loader.prototype.options.theme = "a";
-			$.mobile.loader.prototype.options.html = '<span class="ui-bar ui-overlay-a ui-corner-all"><center><img src="visuels/preload_world.gif"/><br><span style="color:#F00;">Veuillez patienter pendant le chargement</span><br>Merci de votre confiance !</center></span>';
+			$.mobile.loader.prototype.options.html = '<span class="ui-bar ui-overlay-a ui-corner-all"><center><img src="visuels/preload.gif"/><br><span style="color:#F00;">Veuillez patienter pendant le chargement</span><br>Merci de votre confiance !</center></span>';
         });
     </script>    
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -1239,25 +1239,16 @@
 			});
 			*/
 			$.post('https://www.mytaxiserver.com/appserver/open_follow.php', { hail_id: hail_id }, function(data){
-				alert(data.ok);
-				if(data.ok) {
-					var latlng = new google.maps.LatLng(data.lat, data.lng);
-					var display_name = 'Taxi ' + data.name;
-					var cabIcon = 'visuels/taxi_loc_icon.png';
-					self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'icon': cabIcon }).click(function() {
-						infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: ' + data.address + '<br><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
-						//infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
-						//infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a></b></p>';
-						self.openInfoWindow({ 'content':  infoCont}, this);
-					});
-					alert(data.lat+', '+data.lng+' - '+data.name+' - '+data.address+' '+data.timestamp);
-				}
-				else {
-					if(app) navigator.notification.alert('Vous ne pouvez suivre un taxi que 30 minutes avant le RDV !!', alertDismissed, 'MonTaxi', 'OK');
-					else alert('Vous ne pouvez suivre un taxi que 30 minutes avant le RDV !!');
-					//document.location.href='index.html';
-					$.mobile.pageContainer.pagecontainer("change", "#history", { transition: "slide"} );
-				}
+				var latlng = new google.maps.LatLng(data.lat, data.lng);
+				var display_name = 'Taxi ' + data.name;
+				var cabIcon = 'visuels/taxi_loc_icon.png';
+				self.addMarker({ id: 'cab', 'position': latlng, 'bounds': true, 'icon': cabIcon }).click(function() {
+					infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: ' + data.address + '<br><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
+					//infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a><span style="font-size: x-small;">(aclualis&eacute; &agrave; ' + data.timestamp+ ')</span></b></p>';
+					//infoCont = '<p style="color:#333;"><b>Votre taxi joignable au: <a data-ajax="false" href="tel:' + data.address + '" class="ui-btn ui-btn-c ui-corner-all ui-shadow ui-icon-phone ui-btn-icon-left">' + data.address + '</a></b></p>';
+					self.openInfoWindow({ 'content':  infoCont}, this);
+				});
+				alert(data.lat+', '+data.lng+' - '+data.name+' - '+data.address+' '+data.timestamp);
 			}, "json");
 			var track = setInterval( function () {
 				$.post('https://www.mytaxiserver.com/appserver/open_follow.php', {  hail_id: hail_id }, function(data){
@@ -1804,7 +1795,7 @@
 		if(action==1) {
 			// Client Agrees...
 			//$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
-			$.post("http://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
+			$.post("http://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&cell=" + tel + "&operator=" + operator + "&ack=1&db=1&cab_wont=0&del=0&status=accepted_by_customer").done(function(data) {
 				//$('.whatNext').empty().append('<p><b>Vous avez accept&eacute; la course, le chauffeur se rend sur place, un mail vous a &eacute;t&eacute; envoy&eacute; et vous allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
 				$('#answerOpen').empty().append('<p><b>Le chauffeur va maintenant vous rejoindre, voici les actions disponibles:</b></p>');
 				$('.whatNext').empty().append(data);
@@ -1821,7 +1812,7 @@
 		else {
 			// Client Abort...
 			//$.post("https://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer").done(function(data) {
-			$.post("http://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer").done(function(data) {
+			$.post("http://www.mytaxiserver.com/appserver/open_diary.php?hail_id=" + hail_id + "&lat=" + lat + "&lng=" + lng + "&cell=" + tel + "&operator=" + operator + "&ack=1&db=1&cab_wont=1&del=1&status=declined_by_customer").done(function(data) {
 				$('#answerOpen').empty();
 				$('.whatNext').empty().append('<p><b>Vous avez refus&eacute; la course et allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
 				$('.whatNext').show('fast');
@@ -1833,6 +1824,28 @@
 			});
 		}
     }
+	function callIncident(irdv, ihail, iop, icell, istatus)
+	{ // callIncident(\''.$rdv.'\', \''.$hail_id.'\', \''.$operator.'\', \''.$cell.'\', \''.$status.'\')
+		$.post("https://www.mytaxiserver.com/appserver/open_incident.php" , { rdvpoint: irdv, hail_id: ihail, operator: iop, cell: icell, status: istatus}, function(data){ 
+			if (data.ok)
+			{
+				var number = data.taxi_phone_number;
+				var message = "Suite à un incident, je ne pourrais vous attendre.";
+				var intent = ""; //leave empty for sending sms using default intent
+				var success = function () {
+				};
+				var error = function (e) {
+				};
+				sms.send(number, message, intent, success, error);
+				//$.mobile.pageContainer.pagecontainer("change", "#infos", { transition: "slide"} );
+				//return false;
+			}
+			else {
+				if(app) navigator.notification.alert("Erreur: L'incident n'a pas été déclaré.", alertDismissed, 'MonTaxi', 'OK');
+				else alert("Erreur: L'incident n'a pas été déclaré.");
+			}
+		}, "json");
+	}
     function refreshApp()
     {
 		document.location.href='index.html';
@@ -2208,7 +2221,6 @@
         </div>
         <div data-role="footer" id="footer_map" data-position="fixed" data-fullscreen="true">
             <center><p>
-            	Vous ne pouvez suivre un taxi que quelques minutes avant le RDV.<br>
                 Les positions sont actualis&eacute;es toutes les 10 secondes.
 				<button onClick="goback('index.html')" class="ui-btn ui-btn-icon-left ui-corner-all ui-shadow ui-icon-power"><p style="font-size:16px"><b>Arr&ecirc;ter</b></p></button>
             </p></center>
