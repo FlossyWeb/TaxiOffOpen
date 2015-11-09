@@ -1189,7 +1189,7 @@
 	$('#follow_open').live('pagecreate', function() {
 		hail_id = $.sessionStorage.getItem('hail_id');
 		var frdv = $.sessionStorage.getItem('frdv');
-		alert(hail_id + " - " + frdv);
+		//alert(hail_id + " - " + frdv);
 		$('#follow_map_open').gmap({'center': mobileMap.center, 'zoom': mobileMap.zoom, 'disableDefaultUI':true, 'mapTypeId': google.maps.MapTypeId.ROADMAP, 'callback': function() {
 			var self = this;
 			navigator.geolocation.getCurrentPosition(function(position, status) {
