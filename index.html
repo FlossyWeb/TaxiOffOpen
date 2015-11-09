@@ -1662,7 +1662,6 @@
 			$.post("https://www.mytaxiserver.com/appserver/open_status_json.php?hail_id=" + hail_id + "&dep=" + dep + "&check=1" , {}, function(data){ 
 				if (data.display != 0)
 				{
-					stopCheckAnswer=true;
 					//clearInterval(time);
 					//clearTimeout(endcourse);
 					//cancel(idcourse);
@@ -1794,6 +1793,8 @@
     {
 		//$('#dblinks').empty();
 		idcourse=''; // reset idcourse
+		stopCheckAnswer=true;
+		answerBoxOpenPoped=0;
 		$('#answerOpen').empty().append('<p><b>Veuillez patienter un instant SVP</b></p>');
 		$('.confButtons').hide('fast');
 		if(action==1) {
@@ -1804,8 +1805,7 @@
 				$('#answerOpen').empty().append('<p><b>Le chauffeur va maintenant vous rejoindre, voici les actions disponibles:</b></p>');
 				$('.whatNext').empty().append(data);
 				$('.whatNext').show('fast');
-				answerBoxOpenPoped=0;
-				stopCheckAnswer=false;
+				//stopCheckAnswer=false;
 				/*
 				setTimeout(function() { 
 					document.location.href=flag;
@@ -1820,8 +1820,7 @@
 				$('#answerOpen').empty();
 				$('.whatNext').empty().append('<p><b>Vous avez refus&eacute; la course et allez &ecirc;tre redirig&eacute; vers l&rsquo;accueil.</b></p>');
 				$('.whatNext').show('fast');
-				answerBoxOpenPoped=0;
-				stopCheckAnswer=false;
+				//stopCheckAnswer=false;
 				setTimeout(function() { 
 					document.location.href=flag;
 				}, 1000);
