@@ -14,7 +14,7 @@
 	   Réservez votre taxi simplement via votre mobile avec l'application Taxi Officiel.
 	</description>
 
-    <preference name="phonegap-version" value="cli-5.2.0" />
+    <preference name="phonegap-version" value="cli-5.1.1" />
     <preference name="orientation"      value="default" />
     <preference name="target-device"    value="universal" />
     <preference name="fullscreen"       value="false" />
@@ -42,8 +42,11 @@
 	</gap:config-file>
 	<gap:plugin name="cordova-plugin-statusbar" source="npm" />
 	<gap:plugin name="cordova-plugin-whitelist" source="npm" />
-	<!-- <gap:plugin name="com.phonegap.plugins.facebookconnect" version="0.9.0"> -->
-	<gap:plugin name="phonegap-facebook-plugin" source="plugins.cordova.io">
+	<!-- 
+	<gap:plugin name="phonegap-facebook-plugin" source="npm">
+	<gap:plugin name="com.phonegap.plugins.facebookconnect" version="0.9.0">
+	-->
+	<gap:plugin name="phonegap-facebook-plugin" source="npm">
 		<param name="APP_ID" value="1477112772546142" />
 		<param name="APP_NAME" value="myTaxi" />
 	</gap:plugin>
