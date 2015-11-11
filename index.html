@@ -96,6 +96,8 @@
 	var scanner;
 	// Detect wether it is an App or WebApp
 	var app;
+	// Lecteur audio
+	var my_media = null;
 
 	////////////////////////////////////////////////////////////
 	
@@ -1093,6 +1095,7 @@
 				led: "E7B242",
 				badge: badgeNumber
 			});
+			playAudio('sounds/ring.mp3');
         }, 180000);
 		//$('#dblinks').empty();
 		$('#map').gmap({'center': mobileMap.center, 'zoom': mobileMap.zoom, 'disableDefaultUI':false, 'mapTypeId': google.maps.MapTypeId.ROADMAP, 'callback': function() {
@@ -1240,7 +1243,8 @@
 					else alert('ADRESSE RDV : '+address+' NON TROUVEE ');
 				}
 			});
-			$.post('https://www.mytaxiserver.com/appserver/open_follow.php', { hail_id: hail_id }, function(data){
+			//$.post('https://www.mytaxiserver.com/appserver/open_follow.php', { hail_id: hail_id }, function(data){
+			$.post('http://www.mytaxiserver.com/appserver/open_follow.php', { hail_id: hail_id }, function(data){
 				var latlng = new google.maps.LatLng(data.lat, data.lng);
 				var display_name = 'Taxi ' + data.name;
 				var cabIcon = 'visuels/taxi_loc_icon.png';
@@ -1251,9 +1255,12 @@
 					self.openInfoWindow({ 'content':  infoCont}, this);
 				});
 				//alert(data.lat+', '+data.lng+' - '+data.name+' - '+data.address+' '+data.timestamp);
-			}, "json");
+			}, "json").fail(function (jqXHR, textStatus, errorThrown) {
+				navigator.notification.alert('Erreur inconnue, le serveur ou la connexion internet sont indisponibles. ' + textStatus+', '+ errorThrown, alertDismissed, 'MonTaxi Erreur', 'OK');
+			});
 			var track = setInterval( function () {
-				$.post('https://www.mytaxiserver.com/appserver/open_follow.php', {  hail_id: hail_id }, function(data){
+				//$.post('https://www.mytaxiserver.com/appserver/open_follow.php', {  hail_id: hail_id }, function(data){
+				$.post('http://www.mytaxiserver.com/appserver/open_follow.php', {  hail_id: hail_id }, function(data){
 					//alert(data.lat+', '+data.lng+' - '+data.name+' - '+data.address+''+data.timestamp);
 					var markerCab = self.get('markers')['cab'];
 					markerCab.setVisible(false);
@@ -1342,7 +1349,8 @@
 					else alert('ADRESSE RDV : '+address+' NON TROUVEE ');
 				}
 			});
-			$.post('https://www.mytaxiserver.com/appserver/follow.php', { taxi: ftaxi, idcourse: fidcourse, dep: fdep, tel: ftel, table: ftable }, function(data){
+			//$.post('https://www.mytaxiserver.com/appserver/follow.php', { taxi: ftaxi, idcourse: fidcourse, dep: fdep, tel: ftel, table: ftable }, function(data){
+			$.post('http://www.mytaxiserver.com/appserver/follow.php', { taxi: ftaxi, idcourse: fidcourse, dep: fdep, tel: ftel, table: ftable }, function(data){
 				if(data.ok) {
 					var latlng = new google.maps.LatLng(data.lat, data.lng);
 					var display_name = 'Taxi ' + data.name;
@@ -1358,9 +1366,12 @@
 					//document.location.href='index.html';
 					$.mobile.pageContainer.pagecontainer("change", "#history", { transition: "slide"} );
 				}
-			}, "json");
+			}, "json").fail(function (jqXHR, textStatus, errorThrown) {
+				navigator.notification.alert('Erreur inconnue, le serveur ou la connexion internet sont indisponibles. ' + textStatus+', '+ errorThrown, alertDismissed, 'MonTaxi Erreur', 'OK');
+			});
 			var track = setInterval( function () {
-				$.post('https://www.mytaxiserver.com/appserver/follow.php', { taxi: ftaxi, idcourse: fidcourse, dep: fdep, tel: ftel, table: ftable }, function(data){
+				//$.post('https://www.mytaxiserver.com/appserver/follow.php', { taxi: ftaxi, idcourse: fidcourse, dep: fdep, tel: ftel, table: ftable }, function(data){
+				$.post('http://www.mytaxiserver.com/appserver/follow.php', { taxi: ftaxi, idcourse: fidcourse, dep: fdep, tel: ftel, table: ftable }, function(data){
 					var markerCab = self.get('markers')['cab'];
 					markerCab.setVisible(false);
 					var latlng = new google.maps.LatLng(data.lat, data.lng);
@@ -1689,6 +1700,7 @@
 						badge: badgeNumber,
 						data: { data:toNotify }
 					});
+					playAudio('sounds/ring.mp3');
 					//return false;
 				}
 			}, "json").always(function(data) {
@@ -1728,34 +1740,38 @@
     function check_answer()
     {
 		dep = $.sessionStorage.getItem('dep');
-		$.post("https://www.mytaxiserver.com/appserver/status.php?idcourse=" + idcourse + "&dep=" + dep + "&check=1" , {}, function(data){ 
-			if (data != 0)
-			{
-				clearInterval(time);
-				clearTimeout(endcourse);
-				cancel(idcourse);
-				document.getElementById('stop').value = 1;
-				//var box = navigator.notification.alert(data);
-				//stopCall();
-				//var box = navigator.notification.alert(data);
-				//$('#thanksResults').empty().append(data);
-				$('#answer').empty().append(data);
-				$( "#answerBox" ).popup( "open", { positionTo: "window" } );
-				badgeNumber = 1;
-				toNotify = data.split("<", 1);
-				cordova.plugins.notification.local.schedule({
-					id: 1,
-					title: "MonTaxi",
-					text: toNotify,
-					led: "E7B242",
-					badge: badgeNumber,
-					data: { data:toNotify }
-				});
-				//return false;
-			}
-		}).always(function(data) {
-			setTimeout('check_answer()', 2000);
-		});
+		if(!stopCheckAnswer) {
+			$.post("https://www.mytaxiserver.com/appserver/status.php?idcourse=" + idcourse + "&dep=" + dep + "&check=1" , {}, function(data){ 
+				if (data != 0)
+				{
+					clearInterval(time);
+					clearTimeout(endcourse);
+					cancel(idcourse);
+					document.getElementById('stop').value = 1;
+					//var box = navigator.notification.alert(data);
+					//stopCall();
+					//var box = navigator.notification.alert(data);
+					//$('#thanksResults').empty().append(data);
+					$('#answer').empty().append(data);
+					$( "#answerBox" ).popup( "open", { positionTo: "window" } );
+					badgeNumber = 1;
+					toNotify = data.split("<", 1);
+					cordova.plugins.notification.local.schedule({
+						id: 1,
+						title: "MonTaxi",
+						text: toNotify,
+						led: "E7B242",
+						badge: badgeNumber,
+						data: { data:toNotify }
+					});
+					playAudio('sounds/ring.mp3');
+					stopCheckAnswer=true;
+					//return false;
+				}
+			}).always(function(data) {
+				setTimeout('check_answer()', 2000);
+			});
+		}
     }
     function cancel(idcourse)
     {
@@ -1853,6 +1869,31 @@
     {
 		document.location.href='index.html';
     }
+	function playAudio(src) {
+		if (my_media == null) {
+			// Create Media object from src
+			var path = window.location.pathname;
+			path = path.substring(0, path.lastIndexOf('/') + 1);
+			var source = path + src;
+			my_media = new Media(source, playOnSuccess, playOnError);
+		}
+		// Play audio
+		my_media.play();
+	} 
+	// Stop audio
+	function stopAudio() {
+		if (my_media) {
+			my_media.stop();
+		}
+	}
+	// onSuccess Callback
+	function playOnSuccess() {
+		//console.log("playAudio():Audio Success");
+	}
+	// onError Callback 
+	function playOnError(error) {
+		//navigator.notification.alert('code: '    + error.code    + '\n' + 'message: ' + error.message + '\n');
+	}
     </script>
     </head>
     <body style="margin:0px; padding:0px;">
