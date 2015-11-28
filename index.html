@@ -536,11 +536,24 @@
 		$.sessionStorage.setItem('ridcourse', ridcourse);
 		$.sessionStorage.setItem('rdep', rdep);
 		$.sessionStorage.setItem('rtel', rtel);
+		$('#leTaxiRate').hide();
+		$.mobile.pageContainer.pagecontainer("change", "#rate_page", { transition: "slide"} );
+	}
+	function rateCabOpen(rtaxi, ridcourse, rdep, rtel, rhail_id, rrdv)
+	{ //\''.$taxi.'\', \''.$idcourse.'\', \''.$dep.'\', \''.$tel.'\', \''.$hail_id.'\', \''.$rdv.'\'
+		$.sessionStorage.setItem('rtaxi', rtaxi);
+		$.sessionStorage.setItem('rhail_id', rhail_id);
+		$.sessionStorage.setItem('rrdv', rrdv);
+		$.sessionStorage.setItem('ridcourse', ridcourse);
+		$.sessionStorage.setItem('rdep', rdep);
+		$.sessionStorage.setItem('rtel', rtel);
+		$('#monTaxiRate').hide();
 		$.mobile.pageContainer.pagecontainer("change", "#rate_page", { transition: "slide"} );
 	}
 	$( '#rate_page' ).live( 'pagecreate',function(event){
 		var noted = $.sessionStorage.getItem('rtaxi');
 		$('#urate').empty().append('Vous notez le taxi '+noted);
+		$('#urate2').empty().append('Vous notez le taxi '+noted);
 		$(".rating").starRating({
 			minus: false // step minus button
 		});
@@ -551,6 +564,9 @@
 			minus: false // step minus button
 		});
 		$(".rating4").starRating({
+			minus: false // step minus button
+		});
+		$(".rating5").starRating({
 			minus: false // step minus button
 		});
 	});
@@ -567,6 +583,19 @@
 		var comRate = $(".comRate").val();
 		//navigator.notification.alert(rtaxi+' - '+ridcourse+' - '+rdep+' - '+rtel+' - '+accueil+' - '+tarif+' - '+vehicule+' - '+conduite);
 		$.post("https://www.mytaxiserver.com/mytaxisrv/rate.php", { taxi: rtaxi, idcourse: ridcourse, dep: rdep, tel: rtel, accueil: accueil, tarif: tarif, vehicule: vehicule, conduite: conduite, comments: comRate, judge: 1}, function(data){ $('#rateBack').empty().append('Vos notes ont &eacute;t&eacute; prise en compte, Merci.');});
+	}
+	function ratingOpen()
+	{
+		var rhail_id = $.sessionStorage.getItem('rhail_id');
+		var rrdv = $.sessionStorage.getItem('rrdv');
+		var rtaxi = $.sessionStorage.getItem('rtaxi');
+		var ridcourse = $.sessionStorage.getItem('ridcourse');
+		var rdep = $.sessionStorage.getItem('rdep');
+		var rtel = $.sessionStorage.getItem('rtel');
+		var giveNote = $(".rating5").data("val");
+		var comRate = $(".leComRate").val();
+		//navigator.notification.alert(rtaxi+' - '+ridcourse+' - '+rdep+' - '+rtel+' - '+accueil+' - '+tarif+' - '+vehicule+' - '+conduite);
+		$.post("https://www.mytaxiserver.com/mytaxisrv/open_rate.php", { taxi: rtaxi, idcourse: ridcourse, dep: rdep, tel: rtel, hail_id: rhail_id, giveNote: giveNote, comments: comRate, cell: tel, operator: operator, rdv: rrdv, judge: 1}, function(data){ $('#leRateBack').empty().append('Vos note et commentaire ont &eacute;t&eacute; prise en compte, Merci.');});
 	}
 	function booking()
 	{
@@ -1086,16 +1115,18 @@
 	
 	$('#map_page').live('pagecreate', function() {
         endcourse = setTimeout( function () {
-            $("#cancel").trigger('click');
-			badgeNumber = 1;
-			cordova.plugins.notification.local.schedule({
-				id: 1,
-				title: "MonTaxi",
-				text: "Aucun taxi n'a pris la course, veuillez réessayer SVP.",
-				led: "E7B242",
-				badge: badgeNumber
-			});
-			playAudio('sounds/ring.mp3');
+			if(!stopCheckAnswer) {
+				$("#cancel").trigger('click');
+				badgeNumber = 1;
+				cordova.plugins.notification.local.schedule({
+					id: 1,
+					title: "MonTaxi",
+					text: "Aucun taxi n'a pris la course, veuillez réessayer SVP.",
+					led: "E7B242",
+					badge: badgeNumber
+				});
+				playAudio('sounds/ring.mp3');
+			}
         }, 180000);
 		//$('#dblinks').empty();
 		$('#map').gmap({'center': mobileMap.center, 'zoom': mobileMap.zoom, 'disableDefaultUI':false, 'mapTypeId': google.maps.MapTypeId.ROADMAP, 'callback': function() {
@@ -1164,7 +1195,7 @@
 			time = setInterval( function () {
 				var stoper = document.getElementById('stop').value;
 				if (stoper != 1) {$('#dblinks #' + index).trigger('click');}
-				if ((index > 5) || (stoper == 1)) {
+				if ((index > 5) || (stoper == 1) || stopCheckAnswer) {
 					// THIS ONE IS THE 0000 CAB AND LAST ONE SO...
 					clearInterval(time); // Clears the current Interval
                     //clearTimeout(endcourse);
@@ -2302,7 +2333,7 @@
 			</table>
 		</div>
         <div class="ui-content" role="main">
-            <div style="display:block;">
+            <div style="display:block;" id="monTaxiRate">
             	<center>
                 <div id="urate" style="font-weight:bold;color: #FC0;"></div>
                 </center>
@@ -2319,6 +2350,18 @@
 				<textarea id="comRate" class="comRate" maxlength="512" placeholder="Commentaires"></textarea>
                 <center><div id="rateBack"></div></center>
                 <button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check" onClick="rating()">Envoyer</button>
+            </div>
+            <div style="display:block;" id="leTaxiRate">
+            	<center>
+                <div id="urate2" style="font-weight:bold;color: #FC0;"></div>
+                </center>
+                <div class="ui-bar-a ui-corner-all ui-shadow" style="padding:1em; display:block;">
+                    Note :
+                    <div class="rating5" data-rating-max="5"></div><div class="cleaner"></div>
+                </div>
+				<textarea id="leComRate" class="leComRate" maxlength="512" placeholder="Commentaires"></textarea>
+                <center><div id="leRateBack"></div></center>
+                <button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check" onClick="ratingOpen()">Envoyer</button>
             </div>
         </div>
     </div>
