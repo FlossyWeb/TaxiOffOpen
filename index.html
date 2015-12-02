@@ -2359,7 +2359,14 @@
                     Note :
                     <div class="rating5" data-rating-max="5"></div><div class="cleaner"></div>
                 </div>
-				<textarea id="leComRate" class="leComRate" maxlength="512" placeholder="Commentaires"></textarea>
+				<!-- <textarea id="leComRate" class="leComRate" maxlength="512" placeholder="Commentaires"></textarea> -->
+				<select id="leComRate" class="leComRate"> 
+					<option value="" selected>Commentaires</option>
+					<option value="late">En retard</option>
+					<option value="no_credit_card">Pas de CB</option>
+					<option value="bad_itinerary">Mauvais itin&eacute;raire</option>
+					<option value="dirty_taxi">V&eacute;hicule sale</option>
+				</select>
                 <center><div id="leRateBack"></div></center>
                 <button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check" onClick="ratingOpen()">Envoyer</button>
             </div>
