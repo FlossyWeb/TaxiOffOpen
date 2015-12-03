@@ -537,6 +537,7 @@
 		$.sessionStorage.setItem('rdep', rdep);
 		$.sessionStorage.setItem('rtel', rtel);
 		$('#leTaxiRate').hide();
+		$('#monTaxiRate').show();
 		$.mobile.pageContainer.pagecontainer("change", "#rate_page", { transition: "slide"} );
 	}
 	function rateCabOpen(rtaxi, ridcourse, rdep, rtel, rhail_id, rrdv)
@@ -548,6 +549,7 @@
 		$.sessionStorage.setItem('rdep', rdep);
 		$.sessionStorage.setItem('rtel', rtel);
 		$('#monTaxiRate').hide();
+		$('#leTaxiRate').show();
 		$.mobile.pageContainer.pagecontainer("change", "#rate_page", { transition: "slide"} );
 	}
 	$( '#rate_page' ).live( 'pagecreate',function(event){
@@ -2335,7 +2337,7 @@
         <div class="ui-content" role="main">
             <div style="display:block;" id="monTaxiRate">
             	<center>
-                <div id="urate" style="font-weight:bold;color: #FC0;"></div>
+					<div id="urate" style="font-weight:bold;color: #FC0;"></div>
                 </center>
                 <div class="ui-bar-a ui-corner-all ui-shadow" style="padding:1em; display:block;">
                     Accueil :
@@ -2353,7 +2355,7 @@
             </div>
             <div style="display:block;" id="leTaxiRate">
             	<center>
-                <div id="urate2" style="font-weight:bold;color: #FC0;"></div>
+					<div id="urate2" style="font-weight:bold;color: #FC0;"></div>
                 </center>
                 <div class="ui-bar-a ui-corner-all ui-shadow" style="padding:1em; display:block;">
                     Note :
