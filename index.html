@@ -571,6 +571,14 @@
 		$(".rating5").starRating({
 			minus: false // step minus button
 		});
+		// For openRating there is a comment only if 3 stars or less
+		$('#leComRateCont').hide();
+		setInterval( function () {
+			//var fifthRate = $(".rating5").data("val");
+			var fifthRate = document.getElementById("rating5").getAttribute("data-val");
+			if (fifthRate < 4 && fifthRate != null) { $('#leComRateCont').show();}
+			else $('#leComRateCont').hide();
+		}, 1000);
 	});
 	function rating()
 	{
@@ -595,9 +603,9 @@
 		var rdep = $.sessionStorage.getItem('rdep');
 		var rtel = $.sessionStorage.getItem('rtel');
 		var giveNote = $(".rating5").data("val");
-		var comRate = $(".leComRate").val();
+		var comRate = $("#leComRate").val();
 		//navigator.notification.alert(rtaxi+' - '+ridcourse+' - '+rdep+' - '+rtel+' - '+accueil+' - '+tarif+' - '+vehicule+' - '+conduite);
-		$.post("https://www.mytaxiserver.com/mytaxisrv/open_rate.php", { taxi: rtaxi, idcourse: ridcourse, dep: rdep, tel: rtel, hail_id: rhail_id, giveNote: giveNote, comments: comRate, cell: tel, operator: operator, rdv: rrdv, judge: 1}, function(data){ $('#leRateBack').empty().append('Vos note et commentaire ont &eacute;t&eacute; prise en compte, Merci.');});
+		$.post("https://www.mytaxiserver.com/appclient/open_rate.php", { taxi: rtaxi, idcourse: ridcourse, dep: rdep, tel: rtel, hail_id: rhail_id, giveNote: giveNote, comments: comRate, cell: tel, operator: operator, rdv: rrdv, judge: 1}, function(data){ $('#leRateBack').empty().append('Vos note et commentaire ont &eacute;t&eacute; prise en compte, Merci.');});
 	}
 	function booking()
 	{
@@ -670,7 +678,7 @@
 			num_req = idcourse;
 			dep = $.sessionStorage.getItem('dep');
 			url = 'taxi=0000&tel=0000000000&idcourse=' + idcourse + '&num_req=' + num_req + '&rdvpoint=' + rdvpoint + '&lat=' + rdvlat + '&lng=' + rdvlng + '&comments=' + comments + '&cell=' + cell + '&when=' + when + '&date=' + date + '&operator=' + operator + '&howmany=' + howMany + '&dep=' + dep + '&zip=' + zip+'&group=1&ack=0&db=1';
-			url = url.replace(/'/g, "&rsquo;");
+			//url = url.replace(/'/g, "&rsquo;"); // if we escape with &rsquo; it will break the url adding a new var &...
 			url = url.replace(/(?:\r\n|\r|\n)/g, '<br/>'); // Replaces line breaks by <br/>
 			//navigator.notification.alert(url);
 			$.post("https://www.mytaxiserver.com/appserver/bookings_app_share.php", url, function(data) {
@@ -2359,16 +2367,18 @@
                 </center>
                 <div class="ui-bar-a ui-corner-all ui-shadow" style="padding:1em; display:block;">
                     Note :
-                    <div class="rating5" data-rating-max="5"></div><div class="cleaner"></div>
+                    <div class="rating5" id="rating5" data-rating-max="5"></div><div class="spacer"></div>
                 </div>
-				<!-- <textarea id="leComRate" class="leComRate" maxlength="512" placeholder="Commentaires"></textarea> -->
-				<select id="leComRate" class="leComRate"> 
-					<option value="" selected>Commentaires</option>
-					<option value="late">En retard</option>
-					<option value="no_credit_card">Pas de CB</option>
-					<option value="bad_itinerary">Mauvais itin&eacute;raire</option>
-					<option value="dirty_taxi">V&eacute;hicule sale</option>
-				</select>
+				<div id="leComRateCont">
+					<!-- <textarea id="leComRate" class="leComRate" maxlength="512" placeholder="Commentaires"></textarea> -->
+					<select id="leComRate" class="leComRate"> 
+						<option value="" selected>Commentaires</option>
+						<option value="late">En retard</option>
+						<option value="no_credit_card">Pas de CB</option>
+						<option value="bad_itinerary">Mauvais itin&eacute;raire</option>
+						<option value="dirty_taxi">V&eacute;hicule sale</option>
+					</select>
+				</div>
                 <center><div id="leRateBack"></div></center>
                 <button class="ui-btn ui-corner-all ui-shadow ui-btn-c ui-btn-icon-left ui-icon-check" onClick="ratingOpen()">Envoyer</button>
             </div>
