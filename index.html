@@ -1707,7 +1707,11 @@
 			setTimeout('check_answer_open()', 500);
 			//check_answer_open();
 			$.mobile.loading( "hide" );
-		}).fail(function() { alert('Erreur !') });
+		}).fail(function() { 
+			alert('Erreur !')
+			if(app) navigator.notification.alert("Erreur: La demande n'a pas été envoyée.", alertDismissed, 'MonTaxi', 'OK');
+			else alert("Erreur: La demande n'a pas été envoyée.");
+		});
     }
 	
     function check_answer_open()
@@ -2379,11 +2383,12 @@
 				<div id="leComRateCont">
 					<!-- <textarea id="leComRate" class="leComRate" maxlength="512" placeholder="Commentaires"></textarea> -->
 					<select id="leComRate" class="leComRate"> 
-						<option value="" selected>Commentaires</option>
-						<option value="late">En retard</option>
-						<option value="no_credit_card">Pas de CB</option>
-						<option value="bad_itinerary">Mauvais itin&eacute;raire</option>
-						<option value="dirty_taxi">V&eacute;hicule sale</option>
+						<option value="" selected>Raisons possibles</option>
+						<option value="ko">Refus de service</option>
+						<option value="payment">Probl&egrave;me de paiement (moyen de paiement, rendu de monnaie...)</option>
+						<option value="cleanliness">Probl&egrave;me de propret&eacute; (v&eacute;hicule sale, odeur de tabac...)</option>
+						<option value="route">Probl&egrave;me de trajet (d&eacute;tours...)</option>
+						<option value="courtesy">Probl&egrave;me (politesse, radio, conduite...)</option>
 					</select>
 				</div>
                 <center><div id="leRateBack"></div></center>
